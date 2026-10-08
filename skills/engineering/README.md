@@ -23,7 +23,7 @@
   → 可用 goals/ 下对应 goal-*
 
 模糊探索 / UI 体验持续打磨 / “更高级、更好玩”
-  → goal-polish（仅显式调用进入长循环）
+  → goal-improve（仅显式调用进入长循环）
 ```
 
 **任何会改变高成本契约的任务，都必须回到 `task-design`；Goal 工作流不能绕过设计 Review + 人工确认闸门。**
@@ -62,7 +62,7 @@
 → task-execution
 ```
 
-`goal-fix / goal-refactor / goal-performance / goal-investigate` 用于不改变高成本契约的专项任务；`goal-polish` 用于主观、反复迭代的体验打磨。
+`goal-fix / goal-refactor / goal-performance / goal-investigate` 用于不改变高成本契约的专项任务；`goal-improve` 用于主观、反复迭代的体验打磨。
 
 ## 仓库内技能
 
