@@ -2,7 +2,7 @@
 
 跨项目复用的工程开发技能。主文件与 references、templates 一并保存。
 
-- 来源：[duyiliu/ai-dev-handbook](https://github.com/duyiliu/ai-dev-handbook/tree/8a60811d76ba4d4dea1528bb5cdc855e1f636d01/skills/engineering)
+- 历史来源（仅供追溯）：[ai-dev-handbook 的迁移基线](https://github.com/duyiliu/ai-dev-handbook/tree/8a60811d76ba4d4dea1528bb5cdc855e1f636d01/skills/engineering)
 - 来源提交：`8a60811d76ba4d4dea1528bb5cdc855e1f636d01`
 - 核对日期：2026-10-07
 - 适用范围：跨项目；Ext Plus 规则仅适用于采用该框架的项目。
@@ -70,7 +70,7 @@
 - [task-execution](task-execution/SKILL.md) — 将已确认 design / 目标转成 `tasks.md`，维护代码基线与 AC 覆盖，持续实现、验证、Review 和返工
 - [ai-test-checkpoints](ai-test-checkpoints/SKILL.md) — AI 通用测试检查点：跨项目 Web 管理系统的 12 维度黑盒测试检查清单
 
-## Handbook Skill 原文 / 本地适配
+## 已整合并在本仓库维护的工程 Skill
 
 - [git-commit](git-commit/SKILL.md) — 原子提交、提交消息、暂存与推送流程
 - [ext-plus-backend-dev-rules](ext-plus-backend-dev-rules/SKILL.md) — Ext Plus 后端规范，包含 7 份 references
@@ -90,4 +90,4 @@
 
 归档副本不会自动成为客户端的已安装 Skill。复用时复制完整技能目录，保留相对引用；执行时以用户指令及项目规则为准。
 
-更新 Handbook 来源技能时先对照来源提交和本地修改，避免覆盖仓库内本地适配内容。
+后续技能更新只修改本仓库；Handbook 仅保留历史提交供溯源，不再作为更新来源。
