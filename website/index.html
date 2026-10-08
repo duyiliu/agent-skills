@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="可搜索的 Agent Skills 知识库。探索工程开发、问题调查、性能优化与 UI 打磨工作流，通过 GitHub 维护更新。">
+  <meta name="theme-color" content="#f5f4ef"><title>Agent Skills · 好方法，随时可用</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23df532d'/%3E%3Cpath d='m34 9-18 26h14l-3 20 21-29H33z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css"><script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./" aria-label="Agent Skills 首页"><span class="brand-mark">✳</span>agent<span class="brand-light">skills</span><span class="beta">LIBRARY</span></a><a class="repo-link" href="https://github.com/duyiliu/agent-skills" target="_blank" rel="noopener noreferrer">GitHub 仓库 <span aria-hidden="true">↗</span></a></header>
+  <div class="workspace">
+    <aside class="sidebar"><div class="sidebar-label">你的方法工具箱</div><nav id="categories" aria-label="Skill 分类"></nav><div class="side-note"><span class="tiny-symbol">↗</span><h3>方法持续进化</h3><p>发现可以改进的地方？<br>在详情页进入 GitHub，<br>编辑并提交你的更新。</p><span class="side-note-foot">公开阅读 · GitHub 维护</span></div><div class="sidebar-bottom">SMALL SKILLS.<br>BETTER WORK.</div></aside>
+    <main>
+      <section class="hero"><div class="eyebrow"><span class="status-dot"></span> 为每一次协作，准备好方法</div><h1>让好方法，<br><span>随时可用。</span><span class="hero-spark" aria-hidden="true">✳</span></h1><p class="hero-description">把经验变成可以复用的工作流。<br>搜索、阅读，找到适合当前任务的 Agent Skill。</p><div class="hero-stats"><span><b id="skill-count">—</b> 个 Skills</span><span><b>03</b> 个能力分类</span><span class="stat-end">持续积累 <span aria-hidden="true">↗</span></span></div></section>
+      <section class="library" aria-labelledby="library-title"><div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索名称、用途或正文内容…" aria-label="搜索 Skills" autocomplete="off"><kbd>/</kbd><button id="clear" class="clear-search" hidden aria-label="清空搜索">×</button></div><div class="library-heading"><div><h2 id="library-title">全部 Skills</h2><span id="result-count" role="status" aria-live="polite">正在加载…</span></div><label class="sort-label">排序 <select id="sort" aria-label="排序"><option value="name">名称 A–Z</option><option value="updated">最近更新</option></select></label></div><div id="cards" class="cards" aria-busy="true"></div><div id="empty" class="empty-state" hidden><span>⌕</span><h3>暂时没有匹配的 Skill</h3><p>试试其他关键词，或切换分类。</p><button id="reset" class="button">清空筛选</button></div></section>
+      <footer><span>Agent Skills <span class="footer-dot">·</span> 经验有迹可循，方法可以复用。</span><span id="revision"></span></footer>
+    </main>
+  </div>
+  <dialog id="detail" aria-labelledby="detail-title"><div class="detail-top"><div><span id="detail-category" class="tag"></span><h2 id="detail-title"></h2></div><button id="close-detail" class="close-detail" aria-label="关闭详情">×</button></div><p id="detail-description" class="detail-description"></p><div class="detail-actions"><a id="edit-link" class="button primary" target="_blank" rel="noopener noreferrer">在 GitHub 编辑 ↗</a><button id="copy" class="button">复制全文</button><button id="download" class="button">下载当前文件 ↓</button></div><div class="edit-note">编辑将前往 GitHub，并由 GitHub 验证账号及仓库权限。此页展示最近一次发布的版本。</div><div class="document-layout"><nav id="file-list" aria-label="Skill 文件"></nav><article id="document" class="markdown"></article></div></dialog>
+</body>
+</html>
