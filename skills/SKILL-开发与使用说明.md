@@ -145,7 +145,7 @@ Agent 可以根据 description 自动选择，用户也可以显式调用。
 
 ### 5.1 Codex
 
-Codex 默认允许 Skill 被隐式选择，也允许用户显式调用。
+Codex 一般允许符合策略的 Skill 被隐式选择，也支持显式调用；仅手动 Skill 在具体版本与入口需实际验证，而不是仅凭配置推断。
 
 显式调用示例：
 
@@ -182,6 +182,190 @@ disable-model-invocation: true
 
 本仓库源码中，`goal-polish` 同时保存 Claude 的 frontmatter 限制和 Codex 的 `agents/openai.yaml`。安装到 Codex 时，对安装副本移除 Claude 专用的 `disable-model-invocation` 字段，核心工作流仍只维护一份。
 
+在真实 Codex 对话中用小写规范名 `$goal-polish` 验证是否加载；有版本报告称 `# Skill 开发与使用说明
+
+本文是 本仓库 Skill 的统一开发、组织、触发和使用约定。目标不是把所有开发动作都做成 Skill，而是把真正可复用、可稳定触发、能明显改善 Agent 行为的工作流沉淀下来。
+
+## 1. Skill 是什么
+
+Skill 是给 AI Agent 使用的可复用工作规程。
+
+最小结构：
+
+~~~text
+<skill-name>/
+└── SKILL.md
+~~~
+
+复杂 Skill 可以增加：
+
+~~~text
+<skill-name>/
+├── SKILL.md
+├── references/      # 详细规范、知识、判定规则
+├── templates/       # 稳定输出模板
+├── scripts/         # 必要的确定性脚本
+└── agents/          # 特定运行器适配
+~~~
+
+本仓库按能力组织 Skill，不按 Codex / Claude Code / Kilo 等运行器组织：
+
+~~~text
+skills/
+├── engineering/     # 确定性研发流程、工程规则
+└── goals/           # 专项问题、探索型或长循环工作流
+~~~
+
+## 2. 什么时候应该做成 Skill
+
+适合沉淀为 Skill：
+
+- 同一类任务会反复出现；
+- Agent 容易遗漏关键步骤；
+- 有稳定的方法、边界、验证方式或停止条件；
+- 需要跨项目复用；
+- 需要稳定自动触发，或需要一个明确的手动工作模式；
+- 单靠一句 prompt 很容易执行漂移。
+
+不适合做成 Skill：
+
+- 只会出现一次的任务；
+- 单文件、小范围、低风险修改；
+- 普通字段、SQL、配置、文案修改；
+- 只是为了分类好看而拆分；
+- 已经被现有 Skill 清楚覆盖；
+- 某次任务的过程记录。
+
+> 复杂任务靠工作流，专项问题靠 Goal，小事直接做。
+
+新增 Skill 前先问：如果没有这个 Skill，现有 Skill + 项目规则是否已经能稳定完成？如果答案是能，通常不要新增。
+
+## 3. SKILL.md 基本结构
+
+推荐最小结构：
+
+~~~yaml
+---
+name: goal-fix
+description: Diagnose and repair a specific bug or regression using evidence and focused verification.
+---
+
+# Goal Fix
+
+## Approach
+...
+
+## Completion
+...
+~~~
+
+### 3.1 name
+
+- 稳定、简短、表达能力；
+- 不绑定运行器；
+- 除非本身就是项目/技术栈专用 Skill，否则不要绑定项目名。
+
+示例：`task-design`、`task-execution`、`goal-fix`、`goal-investigate`、`goal-performance`。
+
+### 3.2 description
+
+`description` 同时承担两件事：告诉 Agent 这个 Skill 做什么，以及什么时候应该使用。
+
+自动触发型 Skill 必须把边界写清楚，避免互相抢任务。手动 Mode Skill 应明确写成 manual-invocation mode。
+
+不要写成 `Helps with development.` 这类无法形成可靠路由的描述。
+
+### 3.3 正文
+
+正文优先只保留真正改变执行行为的内容：
+
+- 适用边界；
+- 核心步骤；
+- 证据/验证；
+- 停止条件；
+- 风险和副作用边界；
+- 与其他 Skill 的切换条件。
+
+大量细节下沉到 `references/`，不要把 `SKILL.md` 写成长篇知识文章。
+
+## 4. 自动触发与手动触发
+
+本仓库不自造 `trigger: auto` / `trigger: manual` 字段，触发由运行器决定。
+
+### 4.1 自动 + 手动
+
+适合方法型 Skill：
+
+~~~text
+goal-fix
+goal-investigate
+goal-refactor
+goal-performance
+task-design
+task-execution
+~~~
+
+Agent 可以根据 description 自动选择，用户也可以显式调用。
+
+### 4.2 仅手动
+
+适合进入一种特殊工作模式的 Skill。当前典型是 `goal-polish`。
+
+它表示：
+
+~~~text
+检查 → 找最高价值问题 → 修改 → 重新观察 → 再判断 → 持续迭代 → 达到停止条件
+~~~
+
+因此只有用户明确进入该模式时才启动长循环。
+
+### 4.3 内部能力
+
+不是所有流程都需要单独 Skill。Design Review、Implementation Review、AC coverage 都属于 `task-design / task-execution` 的内部能力，不再拆独立 Skill。
+
+## 5. Codex 与 Claude Code 适配
+
+> Skill 按能力组织；运行器差异只做最小适配。
+
+### 5.1 Codex
+
+Codex 一般允许符合策略的 Skill 被隐式选择，也支持显式调用；仅手动 Skill 在具体版本与入口需实际验证，而不是仅凭配置推断。
+
+显式调用示例：
+
+~~~text
+$goal-fix 修复第二次请求拿不到变量的问题
+~~~
+
+只允许手动进入的 Skill 使用 `agents/openai.yaml`：
+
+~~~yaml
+policy:
+  allow_implicit_invocation: false
+~~~
+
+### 5.2 Claude Code
+
+Claude Code 默认允许自动 + 手动调用。
+
+显式调用示例：
+
+~~~text
+/goal-fix 修复第二次请求拿不到变量的问题
+~~~
+
+只允许用户手动调用：
+
+~~~yaml
+disable-model-invocation: true
+~~~
+
+当前 `goal-polish/SKILL.md` 使用该字段。
+
+### 5.3 当前兼容策略
+
+ 选择器的显示名大小写会影响匹配，`codex debug prompt-input` 也不能代替真实回合验证。详情及不解除手动限制的降级方案见 [goals/README.md](goals/README.md)。
+
 ## 6. 当前 Skill 路由
 
 ~~~text
@@ -196,8 +380,11 @@ disable-model-invocation: true
 Bug 修复
 → goal-fix
 
-原因不明，需要调查
+只要求查原因、不要求修改
 → goal-investigate
+
+调查并修复
+→ goal-fix
 
 行为不变的结构优化
 → goal-refactor
@@ -205,9 +392,11 @@ Bug 修复
 性能问题
 → goal-performance
 
-主观持续打磨
+UI / 交互 / 游戏手感持续打磨
 → 显式 goal-polish
 ~~~
+
+主 Skill 由任务性质决定，不能因为 Bug 修复、专项性能或重构需要多轮，就自动改由 `task-execution` 主导。需要跨步骤记录可在当前工作流维护任务状态；跨会话自动运行另需编排器。
 
 高成本契约包括：核心业务流程/状态机、DB Schema/核心模型、公共 API、权限、消息/事件、迁移/兼容、并发/幂等/事务、多系统协作关系。
 
@@ -255,12 +444,14 @@ design.md
 ## 8. Goal Skills
 
 - `goal-fix`：尽量按“修前复现 → 根因 → 最小修复 → 同条件复验”闭环。
-- `goal-investigate`：默认只读；不知道为什么时先调查，不默认改代码。
+- `goal-investigate`：只读；只要求解释时调查，要求“调查并修复”时直接交给 `goal-fix`。
 - `goal-refactor`：保持外部行为不变，改善内部结构。
-- `goal-performance`：基线 → profile → 修改 → 同条件重新测量；没有可比测量，不宣称变快。
-- `goal-polish`：显式 Mode Skill；观察真实效果 → 找最高价值问题 → 修改 → 再观察 → 持续收敛。
+- `goal-performance`：基线 → profile → 修改 → 回归正确性验证 → 同条件重新测量；没有可比测量或回归未通过，不宣称优化完成。
+- `goal-polish`：显式 Mode Skill；观察真实 UI / 游戏操作效果 → 找最高价值问题 → 修改 → 再观察 → 持续收敛。
 
 任一 Goal 如果发现必须改变高成本契约，立即回到 `task-design`。
+
+Goal Skill 只定义当前会话中的方法、证据、停止条件；并不赋予持久后台执行能力。Pi Goal / Hermes 等外部编排器负责跨会话恢复、重启和无人值守调度，按需使用，非默认依赖。
 
 ## 9. 多 Agent 使用约定
 

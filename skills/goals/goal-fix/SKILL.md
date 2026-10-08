@@ -1,11 +1,11 @@
 ---
 name: goal-fix
-description: Diagnose and repair a specific bug or regression using evidence, a focused change, and clear verification boundaries. Use automatically for bug-fix tasks when no high-cost contract change is required, or when explicitly invoked for a deliberate multi-step repair loop.
+description: Diagnose and repair a specific bug or regression using evidence, a focused change, and clear verification boundaries. Use for requested bug repairs under existing contracts, including multi-step repairs. Select by repair intent, not task length; do not use for read-only investigation or redesign.
 ---
 
 # Goal Fix
 
-Use this workflow for a reported failure, regression, or incorrect result that does not require redesigning high-cost contracts.
+Use this workflow for a reported failure, regression, or incorrect result that does not require redesigning high-cost contracts. A multi-round repair remains `goal-fix`; task length alone does not route it to `task-execution`.
 
 ## Approach
 
@@ -37,7 +37,7 @@ For multi-step fixes define:
 - Iteration: use new evidence to guide the next smallest repair.
 - Stop condition: the cause is repaired with adequate evidence, or a missing decision/access blocks further work.
 
-When the user explicitly invokes this Skill for long-running work and the runtime supports a persistent Goal, establish that Goal and continue toward it.
+Repeat evidence-driven iterations within the active session. Loading a Skill does not start a persistent job or restart a stopped process; unattended rounds, cross-session resumption, and cross-machine orchestration require separately configured tooling such as Pi Goal or Hermes.
 
 ## Completion
 

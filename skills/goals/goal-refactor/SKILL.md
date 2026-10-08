@@ -1,11 +1,11 @@
 ---
 name: goal-refactor
-description: Restructure existing code to improve clarity or maintainability while preserving observable behavior and interfaces. Use automatically for focused refactors that do not alter high-cost contracts, or when explicitly invoked for a deliberate multi-step refactor loop.
+description: Restructure existing code to improve clarity or maintainability while preserving observable behavior and interfaces. Use for requested behavior-preserving refactors under existing contracts, including multi-step work. Select by structural-improvement intent, not task length.
 ---
 
 # Goal Refactor
 
-Use this workflow when the requested outcome is internal structural improvement without a deliberate behavior change.
+Use this workflow when the requested outcome is internal structural improvement without a deliberate behavior change. A multi-round refactor remains `goal-refactor`; task length alone does not route it to `task-execution`.
 
 ## Approach
 
@@ -36,7 +36,7 @@ Define:
 - Iteration: address the highest-value structural issue, then reassess.
 - Stop condition: the stated improvement is achieved or remaining changes are mainly stylistic / too risky.
 
-When explicitly invoked for long-running work and the runtime supports a persistent Goal, establish that Goal and continue toward it.
+Repeat evidence-driven iterations within the active session. Loading a Skill does not start a persistent job or restart a stopped process; unattended rounds, cross-session resumption, and cross-machine orchestration require separately configured tooling such as Pi Goal or Hermes.
 
 ## Completion
 

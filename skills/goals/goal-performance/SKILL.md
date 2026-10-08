@@ -1,6 +1,6 @@
 ---
 name: goal-performance
-description: Improve runtime or resource performance using a measured baseline, profiling evidence, and comparable before-and-after measurements. Use automatically for focused performance work that does not alter high-cost contracts, or when explicitly invoked for a deliberate optimization loop.
+description: Improve runtime or resource performance using a measured baseline, profiling evidence, and comparable before-and-after measurements. Use for explicitly requested measured performance improvements under existing contracts, even across multiple rounds. Do not treat unmeasured cleanup or behavior-changing redesign as performance optimization.
 ---
 
 # Goal Performance
@@ -13,7 +13,8 @@ Use this workflow for latency, throughput, memory, startup, rendering, or resour
 - Profile or otherwise locate the bottleneck before substantial optimization.
 - Define a target from the request or existing objectives; do not invent a material success threshold.
 - Change the measured bottleneck while preserving correctness and public behavior.
-- Re-measure under comparable conditions and report before/after values and limitations.
+- After meaningful changes, run relevant correctness and regression checks; faster but incorrect is a failed optimization.
+- Re-measure with comparable workload, environment, and method; report before/after values, material variance, and limitations.
 
 If a proposed optimization changes high-cost contracts or core business semantics, stop and route through `task-design`.
 
@@ -34,10 +35,10 @@ Define:
 - Verification: comparable measurement method.
 - Constraints: correctness, workload, environment, and resource limits.
 - Iteration: profile → change → measure.
-- Stop condition: target met, remaining gain marginal, or no defensible path remains within scope.
+- Stop condition: target met with correctness checks passing, remaining gain marginal, or no defensible path remains within scope. Without a defensible baseline and comparable measurement, do not claim optimization success.
 
-When explicitly invoked for long-running work and the runtime supports a persistent Goal, establish that Goal and continue toward it.
+Repeat evidence-driven iterations within the active session. Loading a Skill does not start a persistent job or restart a stopped process; unattended rounds, cross-session resumption, and cross-machine orchestration require separately configured tooling such as Pi Goal or Hermes.
 
 ## Completion
 
-Do not call code “faster” without comparable measurement. Report gain, trade-offs, and unmeasured dimensions.
+Do not call code “faster” without comparable measurement. Report measured gain, correctness/regression results, trade-offs, and unmeasured dimensions. Failed regression checks mean the optimization is not complete.
