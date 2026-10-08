@@ -1,16 +1,16 @@
 ---
-name: goal-polish
+name: goal-improve
 description: Manual mode for autonomous, repeated improvement toward a user-defined quality goal. The agent finds issues, plans fixes, makes changes, checks results, and repeats without asking for instructions each round. Useful for UI, games, interactions, and other work that needs ongoing refinement; not for one-off edits.
 disable-model-invocation: true
 ---
 
-# Goal Polish
+# Goal Improve
 
 Improve an existing product or experience **on your own** until the result is good enough, progress stalls, or a decision is needed. The user sets the goal and limits; the agent chooses what to improve each round.
 
 ## Start
 
-- Enter this mode only when the user explicitly calls `goal-polish`. Ordinary requests stay bounded tasks.
+- Enter this mode only when the user explicitly calls `goal-improve`. Ordinary requests stay bounded tasks.
 - At the start, identify the goal, what can be changed, how to check the result, and any time/round/cost limit. Use reasonable defaults when safe; ask only about a decision that blocks work.
 - Do not require the user to provide a task list or approve each small change.
 

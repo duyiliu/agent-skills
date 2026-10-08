@@ -125,7 +125,7 @@ Agent 可以根据 description 自动选择，用户也可以显式调用。
 
 ### 4.2 仅手动
 
-适合进入一种特殊工作模式的 Skill。当前典型是 `goal-polish`。
+适合进入一种特殊工作模式的 Skill。当前典型是 `goal-improve`。
 
 它表示：
 
@@ -176,13 +176,13 @@ Claude Code 默认允许自动 + 手动调用。
 disable-model-invocation: true
 ~~~
 
-当前 `goal-polish/SKILL.md` 使用该字段。
+当前 `goal-improve/SKILL.md` 使用该字段。
 
 ### 5.3 当前兼容策略
 
-本仓库源码中，`goal-polish` 同时保存 Claude 的 frontmatter 限制和 Codex 的 `agents/openai.yaml`。安装到 Codex 时，对安装副本移除 Claude 专用的 `disable-model-invocation` 字段，核心工作流仍只维护一份。
+本仓库源码中，`goal-improve` 同时保存 Claude 的 frontmatter 限制和 Codex 的 `agents/openai.yaml`。安装到 Codex 时，对安装副本移除 Claude 专用的 `disable-model-invocation` 字段，核心工作流仍只维护一份。
 
-在真实 Codex 对话中用小写规范名 `$goal-polish` 验证是否加载；有版本报告称 `$` 选择器的显示名大小写会影响匹配，`codex debug prompt-input` 也不能代替真实回合验证。详情及不解除手动限制的降级方案见 [goals/README.md](goals/README.md)。
+在真实 Codex 对话中用小写规范名 `$goal-improve` 验证是否加载；有版本报告称 `$` 选择器的显示名大小写会影响匹配，`codex debug prompt-input` 也不能代替真实回合验证。详情及不解除手动限制的降级方案见 [goals/README.md](goals/README.md)。
 
 ## 6. 当前 Skill 路由
 
@@ -211,7 +211,7 @@ Bug 修复
 → goal-performance
 
 自主发现问题并持续优化（UI、游戏、交互等）
-→ 显式 goal-polish
+→ 显式 goal-improve
 ~~~
 
 主 Skill 由任务性质决定，不能因为 Bug 修复、专项性能或重构需要多轮，就自动改由 `task-execution` 主导。需要跨步骤记录可在当前工作流维护任务状态；跨会话自动运行另需编排器。
@@ -265,7 +265,7 @@ design.md
 - `goal-investigate`：只读；只要求解释时调查，要求“调查并修复”时直接交给 `goal-fix`。
 - `goal-refactor`：保持外部行为不变，改善内部结构。
 - `goal-performance`：基线 → profile → 修改 → 回归正确性验证 → 同条件重新测量；没有可比测量或回归未通过，不宣称优化完成。
-- `goal-polish`：显式自主优化模式；用户定目标和边界，Agent 自己找问题、计划、修改、测试、评审并反复迭代，直到收敛或遇到停止条件。
+- `goal-improve`：显式自主优化模式；用户定目标和边界，Agent 自己找问题、计划、修改、测试、评审并反复迭代，直到收敛或遇到停止条件。
 
 任一 Goal 如果发现必须改变高成本契约，立即回到 `task-design`。
 
@@ -313,7 +313,7 @@ work-convention/templates/决策模板.md
 
 ### agents/
 
-放运行器专属适配。当前示例：`goal-polish/agents/openai.yaml`。
+放运行器专属适配。当前示例：`goal-improve/agents/openai.yaml`。
 
 不要复制成 `skills/codex/`、`skills/claude/` 两套业务 Skill。
 
@@ -365,7 +365,7 @@ Copy-Item ".\skills\engineering\task-design" "$HOME\.codex\skills\task-design" -
 Copy-Item ".\skills\engineering\task-execution" "$HOME\.codex\skills\task-execution" -Recurse -Force
 ~~~
 
-Goal Skills 的 Codex 安装和 `goal-polish` 兼容处理见 `skills/goals/README.md`。
+Goal Skills 的 Codex 安装和 `goal-improve` 兼容处理见 `skills/goals/README.md`。
 
 ### Claude Code
 
@@ -406,8 +406,8 @@ UI 一次性修改：
 自主持续优化（例如 UI）：
 
 ~~~text
-Codex:      $goal-polish 把工作台持续优化到成熟商业 SaaS 水准
-Claude Code: /goal-polish 把工作台持续优化到成熟商业 SaaS 水准
+Codex:      $goal-improve 把工作台持续优化到成熟商业 SaaS 水准
+Claude Code: /goal-improve 把工作台持续优化到成熟商业 SaaS 水准
 ~~~
 
 ## 16. 当前原则

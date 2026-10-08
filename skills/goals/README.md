@@ -10,7 +10,7 @@
 | `goal-refactor` | 保持行为稳定的重构 | 自动 + 手动 |
 | `goal-performance` | 基于测量的性能优化 | 自动 + 手动 |
 | `goal-investigate` | 根因调查 | 自动 + 手动 |
-| `goal-polish` | 自主发现问题、修改、验证、反复优化直到收敛 | **仅手动进入自主循环** |
+| `goal-improve` | 自主发现问题、修改、验证、反复优化直到收敛 | **仅手动进入自主循环** |
 
 `goal-feature` 已移除。确定性新功能统一走：
 
@@ -27,7 +27,7 @@ task-design
 
 - 企业确定性新功能、系统集成、DB / 公共 API / 权限 / 状态机等高成本契约变化 → `engineering/task-design + task-execution`
 - 不改变高成本契约的 Bug 修复 / 只读调查 / 性能优化 / 行为不变重构 → 对应 `goal-*`；即使持续多轮也不因任务时长转交 `task-execution`
-- 需要 Agent 自己找问题、决定每轮改什么并持续优化时，显式进入 `goal-polish`；UI、游戏、交互只是例子，普通一次性修改不进入自主循环
+- 需要 Agent 自己找问题、决定每轮改什么并持续优化时，显式进入 `goal-improve`；UI、游戏、交互只是例子，普通一次性修改不进入自主循环
 - 小改动不要因为匹配到关键词就进入 Goal 长循环
 - 任一 Goal 执行中如果发现必须改变高成本契约，立即回到 `task-design`
 
@@ -41,7 +41,7 @@ Skill 核心描述只说明“什么时候适用”，不在正文绑定某个�
 
 `goal-fix / goal-refactor / goal-performance / goal-investigate` 默认允许自动 + 手动。
 
-`goal-polish` 是一个明确的**自主优化模式**：用户只给目标和边界，Agent 自己检查 → 找问题 → 计划 → 修改 → 测试 → 评审 → 继续，直到达到停止条件。只有用户显式调用时才进入；普通优化请求不会自动变成长循环。
+`goal-improve` 是一个明确的**自主优化模式**：用户只给目标和边界，Agent 自己检查 → 找问题 → 计划 → 修改 → 测试 → 评审 → 继续，直到达到停止条件。只有用户显式调用时才进入；普通优化请求不会自动变成长循环。
 
 ## 运行器适配
 
@@ -50,10 +50,10 @@ Skill 核心描述只说明“什么时候适用”，不在正文绑定某个�
 Codex 的显式调用示例：
 
 ```text
-$goal-polish 把当前工作台持续打磨到成熟商业 SaaS 水准
+$goal-improve 把当前工作台持续打磨到成熟商业 SaaS 水准
 ```
 
-`goal-polish/agents/openai.yaml`：
+`goal-improve/agents/openai.yaml`：
 
 ```yaml
 policy:
@@ -67,10 +67,10 @@ policy:
 Claude Code 的显式调用示例：
 
 ```text
-/goal-polish 把当前工作台持续打磨到成熟商业 SaaS 水准
+/goal-improve 把当前工作台持续打磨到成熟商业 SaaS 水准
 ```
 
-`goal-polish/SKILL.md` frontmatter：
+`goal-improve/SKILL.md` frontmatter：
 
 ```yaml
 disable-model-invocation: true
@@ -86,22 +86,22 @@ disable-model-invocation: true
 $src = ".\skills\goals"
 $dst = "$HOME\.codex\skills"
 
-"goal-fix","goal-refactor","goal-polish","goal-performance","goal-investigate" |
+"goal-fix","goal-refactor","goal-improve","goal-performance","goal-investigate" |
   ForEach-Object {
     Copy-Item "$src\$_" "$dst\$_" -Recurse -Force
   }
 
-$polish = Join-Path $dst "goal-polish\SKILL.md"
-(Get-Content $polish) |
+$improve = Join-Path $dst "goal-improve\SKILL.md"
+(Get-Content $improve) |
   Where-Object { $_ -notmatch '^disable-model-invocation:\s*true\s*$' } |
-  Set-Content $polish -Encoding utf8
+  Set-Content $improve -Encoding utf8
 ```
 
 这样同一份能力定义仍然复用，只在安装层处理运行器扩展差异。
 
-**Codex 显式调用验证：** 安装后在真实 Codex 对话中输入小写规范名 `$goal-polish`，确认 Skill 正文确实加载，而不只是显示文字。已知某些版本的 `$` 选择器会提交带大写的显示名，导致大小写不匹配；此时优先手动输入小写名。`codex debug prompt-input` 不经过完整的 turn-time Skill 注入流程，不能单独用来判断调用失败。参见 [Codex #40600](https://github.com/openai/codex/issues/40600) 和 [#43727](https://github.com/openai/codex/issues/43727)。
+**Codex 显式调用验证：** 安装后在真实 Codex 对话中输入小写规范名 `$goal-improve`，确认 Skill 正文确实加载，而不只是显示文字。已知某些版本的 `$` 选择器会提交带大写的显示名，导致大小写不匹配；此时优先手动输入小写名。`codex debug prompt-input` 不经过完整的 turn-time Skill 注入流程，不能单独用来判断调用失败。参见 [Codex #40600](https://github.com/openai/codex/issues/40600) 和 [#43727](https://github.com/openai/codex/issues/43727)。
 
-若所在入口仍不能显式加载，明确报告本次为兼容性受限，可在对话中**手动读取并遵循** `goal-polish/SKILL.md`（不宣称已通过 Skill 机制调用）；不要悄悄移除 `allow_implicit_invocation: false`，以免无意启用自动选择。
+若所在入口仍不能显式加载，明确报告本次为兼容性受限，可在对话中**手动读取并遵循** `goal-improve/SKILL.md`（不宣称已通过 Skill 机制调用）；不要悄悄移除 `allow_implicit_invocation: false`，以免无意启用自动选择。
 
 ## 多 Agent 协作原则
 

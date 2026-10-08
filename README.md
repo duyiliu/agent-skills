@@ -31,7 +31,7 @@ Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/
 - [goal-investigate](skills/goals/goal-investigate/SKILL.md) — investigate unclear behavior and report evidence-supported causes.
 - [goal-performance](skills/goals/goal-performance/SKILL.md) — improve performance using comparable measurements.
 - [goal-refactor](skills/goals/goal-refactor/SKILL.md) — restructure code while preserving observable behavior.
-- [goal-polish](skills/goals/goal-polish/SKILL.md) — explicitly enter an iterative UI/UX polish loop.
+- [goal-improve](skills/goals/goal-improve/SKILL.md) — manually start an autonomous improvement loop.
 - [Goal index](skills/goals/README.md)
 
 ## Repository management
