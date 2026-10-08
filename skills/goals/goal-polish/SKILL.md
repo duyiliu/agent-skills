@@ -1,52 +1,55 @@
 ---
 name: goal-polish
-description: Manual-invocation mode for sustained evidence-based polish of an existing UI, interactive experience, or game feel against rendered or playable results. Not for one-off edits or automatic invocation.
+description: Manual mode for autonomous, repeated improvement toward a user-defined quality goal. The agent finds issues, plans fixes, makes changes, checks results, and repeats without asking for instructions each round. Useful for UI, games, interactions, and other work that needs ongoing refinement; not for one-off edits.
 disable-model-invocation: true
 ---
 
 # Goal Polish
 
-Use this workflow for subjective UI/UX, interactive-product, and game-feel improvement where quality must be judged against the actual rendered or playable experience rather than code alone.
+Improve an existing product or experience **on your own** until the result is good enough, progress stalls, or a decision is needed. The user sets the goal and limits; the agent chooses what to improve each round.
 
-## Trigger intent
+## Start
 
-This is a **deliberate iterative mode** and should be entered only when the user explicitly invokes this Skill through the current runtime's Skill command.
+- Enter this mode only when the user explicitly calls `goal-polish`. Ordinary requests stay bounded tasks.
+- At the start, identify the goal, what can be changed, how to check the result, and any time/round/cost limit. Use reasonable defaults when safe; ask only about a decision that blocks work.
+- Do not require the user to provide a task list or approve each small change.
 
-A natural-language UI/game request without explicit Skill invocation remains a normal bounded task. Do not silently turn “adjust this spacing”, “make the combat feel better”, or even a broad polish request into an open-ended loop.
+## Loop
 
-## Approach
+Repeat independently:
 
-- Inspect the running/rendered interface or playable interaction when available; for games, use real input, gameplay capture, and replays rather than judging source code alone.
-- Find only the highest-value issues: visual hierarchy, readability, spacing, consistency, responsiveness; or input feel, camera, feedback, combat rhythm, and interaction clarity where relevant.
-- Define a repeatable observation or interaction for each meaningful issue; do not invent objective thresholds for subjective quality.
-- Make focused improvements that preserve working behavior and fit the product direction.
-- Reinspect the rendered or playable result and relevant regression checks after changes.
-- Continue while clear high-value gaps remain.
-- Stop when remaining changes are marginal or require a product preference from the user. Do not invent new defects just to keep the loop running.
+1. **Check** the current result. Use the running app, screenshots, tests, gameplay, or other direct evidence where available.
+2. **Find** the most important remaining issue. Keep a short, ranked list; do not invent problems to stay busy.
+3. **Plan** the smallest useful improvement and its check.
+4. **Change** the code or assets within the agreed limits.
+5. **Test** the result, including relevant regression checks.
+6. **Review** whether it is actually better. If not, revert or adjust; then pick the next issue.
 
-If the work reveals a required change to business flow/state, DB schema, public API, permissions, messages, migration/compatibility, concurrency/idempotency/transaction semantics, stop and route that change through `task-design`.
+Use direct observation for subjective quality. UI examples: layout, clarity, consistency, and interaction. Game examples: controls, feedback, camera, and combat feel. These are examples, **not limits on the Skill**. When direct inspection is unavailable, state what was not verified instead of claiming quality has converged.
 
-## Agent coordination
+## Working with agents
 
-- Default to one Builder making changes. When useful, ask independent, read-only reviewers to inspect distinct aspects of the real rendered/playable experience; do not create a fixed reviewer team for every iteration.
-- Avoid concurrent edits to overlapping UI/game files or shared state. The main agent merges feedback, verifies the experience, and remains responsible for the final quality claim. Fall back to single-agent inspection if delegation is unavailable.
+- One agent is the default. It may ask a separate read-only agent to review when that brings clear value; never require a fixed team.
+- Keep one owner for overlapping files. The main agent decides, integrates changes, and runs the final check.
 
-## Side-effect boundary
+## Stop
 
-Local UI/game-code edits and safe local verification are allowed. Commit, push, deploy/release, production or shared-data writes, credentials use, and irreversible external actions require project-level permission or explicit user authorization.
+Stop and hand over when any of these happens:
 
-## Long-running mode
+- Two consecutive checks find no important actionable issue.
+- Further changes offer little benefit, repeat a failed approach, or exceed the agreed budget.
+- A key choice requires the user's judgment, or safe verification is not possible.
 
-Define:
+Do not stop just because the first change worked. Do not continue forever or invent new work to keep the loop running.
 
-- Outcome: intended UI or gameplay experience improvement.
-- Verification: rendered / playable / interaction evidence appropriate to the product.
-- Constraints: existing behavior, product direction, accessibility, input devices, responsiveness, and regressions as applicable.
-- Iteration: identify a high-value gap → make a focused change → observe the same interaction → reassess.
-- Stop condition: two consecutive real rendered/playable checks reveal no actionable high-priority issues, the remaining benefit is marginal, or a user decision is needed. If actual experience inspection is unavailable, state the verification limit instead of claiming convergence.
+If improvement requires changing core business rules, database schema, public APIs, permissions, migration, or other high-cost contracts, pause that part and route it to `task-design` for user confirmation.
 
-This mode can iterate within the active session, but does not create a persistent service or automatically resume after exit. For unattended retries or cross-session continuation, configure a separate orchestrator (such as Pi Goal or Hermes).
+## Limits
 
-## Completion
+Local edits and safe checks are allowed. Commit, push, deploy, production/shared-data changes, secrets use, and irreversible actions require existing project permission or explicit user approval.
 
-Summarize concrete experience changes and rendered/playable evidence. Separate observed experience from source-level inference and identify untested input devices or interaction paths.
+This Skill can run several rounds in the **current session**. It cannot keep a process alive or resume itself after exit. For unattended or cross-session work, use an external tool such as Pi Goal or Hermes.
+
+## Finish
+
+Report what improved, what was checked, what remains, and why the loop stopped. Distinguish observed results from guesses.

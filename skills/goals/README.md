@@ -10,7 +10,7 @@
 | `goal-refactor` | 保持行为稳定的重构 | 自动 + 手动 |
 | `goal-performance` | 基于测量的性能优化 | 自动 + 手动 |
 | `goal-investigate` | 根因调查 | 自动 + 手动 |
-| `goal-polish` | UI、交互和游戏手感的体验打磨 | **仅手动进入长循环** |
+| `goal-polish` | 自主发现问题、修改、验证、反复优化直到收敛 | **仅手动进入自主循环** |
 
 `goal-feature` 已移除。确定性新功能统一走：
 
@@ -27,7 +27,7 @@ task-design
 
 - 企业确定性新功能、系统集成、DB / 公共 API / 权限 / 状态机等高成本契约变化 → `engineering/task-design + task-execution`
 - 不改变高成本契约的 Bug 修复 / 只读调查 / 性能优化 / 行为不变重构 → 对应 `goal-*`；即使持续多轮也不因任务时长转交 `task-execution`
-- UI、交互、游戏手感等主观持续打磨需要显式进入 `goal-polish`；普通一次性修改仍按有边界的任务处理
+- 需要 Agent 自己找问题、决定每轮改什么并持续优化时，显式进入 `goal-polish`；UI、游戏、交互只是例子，普通一次性修改不进入自主循环
 - 小改动不要因为匹配到关键词就进入 Goal 长循环
 - 任一 Goal 执行中如果发现必须改变高成本契约，立即回到 `task-design`
 
@@ -41,7 +41,7 @@ Skill 核心描述只说明“什么时候适用”，不在正文绑定某个�
 
 `goal-fix / goal-refactor / goal-performance / goal-investigate` 默认允许自动 + 手动。
 
-`goal-polish` 是一个明确的 **Mode Skill**：只有用户显式调用时才进入持续迭代。单纯说“把页面优化一下”不会自动进入长循环。
+`goal-polish` 是一个明确的**自主优化模式**：用户只给目标和边界，Agent 自己检查 → 找问题 → 计划 → 修改 → 测试 → 评审 → 继续，直到达到停止条件。只有用户显式调用时才进入；普通优化请求不会自动变成长循环。
 
 ## 运行器适配
 
