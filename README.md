@@ -4,7 +4,7 @@ Cross-project reusable Skills, organized by capability. Each Skill directory is 
 
 This repository is the canonical source for the migrated LifeOS Skills. Preserve provenance notes in each Skill and check its description and project-specific boundaries before installing it.
 
-Browse the public [Agent Skills website](https://duyiliu-agent-skills.zhangqianfeng1990.chatgpt.site) to search, read, copy, and download Skill files. Editing opens the corresponding GitHub file and requires repository write access. The website displays a published snapshot; rebuild and publish after changing Skills. See [website maintenance](website/README.md).
+Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/) to search, read, copy, and download Skill files. Editing opens the corresponding GitHub file and requires repository write access. GitHub Actions rebuilds and publishes the website after changes to Skills or website code. See [website maintenance](website/README.md).
 
 ## Engineering
 
