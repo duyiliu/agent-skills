@@ -1,11 +1,11 @@
 ---
 name: goal-investigate
-description: Trace an unclear behavior or failure to its strongest evidence-supported explanation and recommend a concrete next action. Use when the deliverable is diagnosis, evidence, or explanation only (read-only). If the user asks to investigate and fix, choose `goal-fix` from the start; use `task-design` for a high-cost contract redesign.
+description: Read-only, evidence-driven root-cause investigation of unexplained technical failures, behavior discrepancies, or suspected defects requiring multi-step tracing or competing-hypothesis checks. Auto-select only when systematic diagnosis is needed; do not use for simple facts, file or folder provenance, Git history or ownership queries, documentation lookup, or routine code navigation. If the user requests a fix, choose goal-fix. Explicit invocation is allowed.
 ---
 
 # Goal Investigate
 
-Use this workflow when the main request is to understand a behavior, discrepancy, or suspected cause.
+Use this workflow when the main request requires systematic, read-only diagnosis of a technical behavior, discrepancy, or suspected failure. For a straightforward question such as "Where did this directory come from?" or "Who added this file?", inspect Git history or file metadata directly without activating this Skill.
 
 ## Approach
 

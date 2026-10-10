@@ -87,7 +87,9 @@ description: Diagnose and repair a specific bug or regression using evidence and
 
 `description` 同时承担两件事：告诉 Agent 这个 Skill 做什么，以及什么时候应该使用。
 
-自动触发型 Skill 必须把边界写清楚，避免互相抢任务。手动 Mode Skill 应明确写成 manual-invocation mode。
+自动触发型 Skill 必须把边界写清楚，避免互相抢任务。尤其要在 description 中直接说明**哪些轻量任务不应自动触发**：如 Git 历史、文件来源、普通代码定位、简单改名和局部修复。手动 Mode Skill 应明确写成 manual-invocation mode。
+
+自动触发要同时满足两个判断：任务性质匹配，且调用专项工作流确实比直接处理更有价值。不能仅因用户用了“为什么 / 查一下 / 修复 / 优化 / 重构”等关键词而选择 Skill；用户显式调用时则尊重调用意图。
 
 不要写成 `Helps with development.` 这类无法形成可靠路由的描述。
 
@@ -187,7 +189,7 @@ disable-model-invocation: true
 ## 6. 当前 Skill 路由
 
 ~~~text
-小而明确、低风险、可逆
+小而明确、低风险、可逆；文件来源、Git 历史、普通代码定位、简单事实查询
 → 直接做
 
 完整业务需求 / 高成本契约变化
@@ -198,7 +200,7 @@ disable-model-invocation: true
 Bug 修复
 → goal-fix
 
-只要求查原因、不要求修改
+复杂技术异常的多步根因调查，只要求解释、不要求修改
 → goal-investigate
 
 调查并修复

@@ -14,7 +14,7 @@
 - 企业业务功能、系统集成、DB / 公共 API / 权限 / 状态机等高成本契约变化 → `engineering/task-design + task-execution`
 - 不改变高成本契约的 Bug / 只读调查 / 性能 / 行为不变重构 → 对应 `goals/goal-*`，与任务耗时无关
 - 希望 Agent 自主发现问题并多轮优化（如 UI、游戏手感）→ 用户显式进入 `goals/goal-improve`
-- 小而明确的一次性修改 → 直接完成，不为了“有 Skill”强行进入长流程
+- 小而明确的一次性修改、简单事实查询、目录 / 文件来源和 Git 历史查询 → 直接完成，不因“为什么 / 调查 / 修复 / 优化”等关键词强行调用 Goal Skill
 
 `goal-feature` 已移除；确定性新功能统一由 `task-design → task-execution` 覆盖。
 

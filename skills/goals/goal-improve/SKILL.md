@@ -1,6 +1,6 @@
 ---
 name: goal-improve
-description: Manual mode for autonomous, repeated improvement toward a user-defined quality goal. The agent finds issues, plans fixes, makes changes, checks results, and repeats without asking for instructions each round. Useful for UI, games, interactions, and other work that needs ongoing refinement; not for one-off edits.
+description: Manual-invocation-only mode for autonomous repeated improvement toward a user-defined quality goal. The agent inspects, finds issues, plans, changes, tests, and reassesses across rounds. Enter only when the user explicitly invokes this Skill, not from words such as improve, optimize, polish, or from an ordinary one-off UI or code request.
 disable-model-invocation: true
 ---
 

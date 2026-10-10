@@ -1,11 +1,11 @@
 ---
 name: goal-refactor
-description: Restructure existing code to improve clarity or maintainability while preserving observable behavior and interfaces. Use for requested behavior-preserving refactors under existing contracts, including multi-step work. Select by structural-improvement intent, not task length.
+description: Improve nontrivial internal code structure while preserving behavior, APIs, and persistence semantics, with caller inspection and regression verification. Auto-select when the restructuring needs deliberate scope and behavior checks; not for simple renames, formatting, or small obvious cleanup. Multi-step refactors remain in this workflow; explicit invocation is allowed.
 ---
 
 # Goal Refactor
 
-Use this workflow when the requested outcome is internal structural improvement without a deliberate behavior change. A multi-round refactor remains `goal-refactor`; task length alone does not route it to `task-execution`.
+Use this workflow when the requested outcome is nontrivial internal structural improvement without a deliberate behavior change. Perform trivial renames, formatting, or localized cleanup directly. A multi-round refactor remains `goal-refactor`; task length alone does not route it to `task-execution`.
 
 ## Approach
 

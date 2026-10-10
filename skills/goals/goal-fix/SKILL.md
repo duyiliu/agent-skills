@@ -1,11 +1,11 @@
 ---
 name: goal-fix
-description: Diagnose and repair a specific bug or regression using evidence, a focused change, and clear verification boundaries. Use for requested bug repairs under existing contracts, including multi-step repairs. Select by repair intent, not task length; do not use for read-only investigation or redesign.
+description: Diagnose and repair a bug or regression through root-cause evidence, a focused fix, and verification. Auto-select when the repair benefits from nontrivial diagnosis or regression checks, not for an obvious, small localized edit. Requested fixes stay in this workflow even across multiple rounds; do not use for read-only questions or contract redesign. Explicit invocation is also allowed.
 ---
 
 # Goal Fix
 
-Use this workflow for a reported failure, regression, or incorrect result that does not require redesigning high-cost contracts. A multi-round repair remains `goal-fix`; task length alone does not route it to `task-execution`.
+Use this workflow for a reported failure, regression, or incorrect result that needs a deliberate diagnosis-and-verification loop and does not require redesigning high-cost contracts. For an obvious, safe, localized correction, fix and verify it directly without automatically entering this Skill. A multi-round repair remains `goal-fix`; task length alone does not route it to `task-execution`.
 
 ## Approach
 

@@ -1,11 +1,11 @@
 ---
 name: goal-performance
-description: Improve runtime or resource performance using a measured baseline, profiling evidence, and comparable before-and-after measurements. Use for explicitly requested measured performance improvements under existing contracts, even across multiple rounds. Do not treat unmeasured cleanup or behavior-changing redesign as performance optimization.
+description: Diagnose and improve meaningful runtime or resource bottlenecks with a baseline, profiling, correctness checks, and comparable before-and-after measurement. Auto-select for performance work that genuinely requires investigation or repeated measurement, not routine SQL edits, simple configuration changes, or generic quick lookups. Do not use for behavior-changing redesign; explicit invocation is allowed.
 ---
 
 # Goal Performance
 
-Use this workflow for latency, throughput, memory, startup, rendering, or resource-use improvements.
+Use this workflow for latency, throughput, memory, startup, rendering, or resource-use improvements that warrant profiling and comparable measurement. Handle simple, well-understood tuning or factual performance questions directly.
 
 ## Approach
 
