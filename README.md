@@ -40,6 +40,10 @@ Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/
 - [goal-improve](skills/goals/goal-improve/SKILL.md) — manually start an autonomous improvement loop.
 - [Goal index](skills/goals/README.md)
 
+## Windows utilities
+
+- [LifeOS knowledge auto-sync](scripts/README.md) — scheduled PowerShell Git sync for Markdown; no model calls.
+
 ## Repository management
 
 - [github-skill-repository](skills/github-skill-repository/SKILL.md) — create, migrate, and maintain GitHub repositories of Skills.

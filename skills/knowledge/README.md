@@ -27,3 +27,7 @@ Windows PowerShell：
 ## 客户端安装
 
 从本仓库将相应目录完整复制到 Codex 的 ~/.codex/skills/ 或 Claude Code 的 ~/.claude/skills/；Pi 根据其 Skill 发现路径配置安装。仓库更新不会自动部署到各客户端。
+
+## 可选后台 Git 同步
+
+Windows 计划任务脚本在 [scripts/README.md](../../scripts/README.md)，不在 knowledge Skill 内执行 Git 操作。AI 不为 Git 同步消耗 Token；自动提交授权仅作用于独立的本机计划任务，两个 Skill 原有权限约定保持不变。
