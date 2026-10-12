@@ -29,7 +29,8 @@ Skill 是给 AI Agent 使用的可复用工作规程。
 ~~~text
 skills/
 ├── engineering/     # 确定性研发流程、工程规则
-└── goals/           # 专项问题、探索型或长循环工作流
+├── goals/           # 专项问题、探索型或长循环工作流
+└── knowledge/       # 用户知识库操作与证据审查
 ~~~
 
 ## 2. 什么时候应该做成 Skill
@@ -214,6 +215,12 @@ Bug 修复
 
 自主发现问题并持续优化（UI、游戏、交互等）
 → 显式 goal-improve
+
+明确要求搜索 / 保存 / 更新个人长期知识
+→ knowledge
+
+明确要求查重 / 过期核对 / 知识库质量审查
+→ knowledge-review（默认只读）
 ~~~
 
 主 Skill 由任务性质决定，不能因为 Bug 修复、专项性能或重构需要多轮，就自动改由 `task-execution` 主导。需要跨步骤记录可在当前工作流维护任务状态；跨会话自动运行另需编排器。
@@ -268,6 +275,8 @@ design.md
 - `goal-refactor`：保持外部行为不变，改善内部结构。
 - `goal-performance`：基线 → profile → 修改 → 回归正确性验证 → 同条件重新测量；没有可比测量或回归未通过，不宣称优化完成。
 - `goal-improve`：显式自主优化模式；用户定目标和边界，Agent 自己找问题、计划、修改、测试、评审并反复迭代，直到收敛或遇到停止条件。
+- `knowledge`：按需检索、记录、更新已配置 LifeOS/Markdown vault；不会自动将所有任务转存为笔记。
+- `knowledge-review`：明确请求时审查重复、冲突、过期与引用问题，默认只读。
 
 任一 Goal 如果发现必须改变高成本契约，立即回到 `task-design`。
 

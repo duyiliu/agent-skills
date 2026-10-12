@@ -25,6 +25,12 @@ Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/
 - [work-convention](skills/engineering/work-convention/SKILL.md) — organize design and execution materials under `work/`.
 - [Engineering index](skills/engineering/README.md)
 
+## Knowledge
+
+- [knowledge](skills/knowledge/knowledge/SKILL.md) — query, capture, and maintain the existing LifeOS Markdown knowledge base without creating a new vault.
+- [knowledge-review](skills/knowledge/knowledge-review/SKILL.md) — explicitly audit duplication, contradictions, stale notes, and links; review is read-only by default.
+- [Knowledge index](skills/knowledge/README.md)
+
 ## Goals
 
 - [goal-fix](skills/goals/goal-fix/SKILL.md) — diagnose and repair a focused bug under existing contracts.
