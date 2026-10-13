@@ -48,3 +48,7 @@ Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/
 
 - [github-skill-repository](skills/github-skill-repository/SKILL.md) — create, migrate, and maintain GitHub repositories of Skills.
 - [Skill development and usage guide](skills/SKILL-开发与使用说明.md)
+
+## GitHub collaboration
+
+- [github-codex-review](skills/github-codex-review/SKILL.md) — trigger and monitor Codex's automated review on a specified GitHub pull request.
