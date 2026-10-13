@@ -15,9 +15,14 @@ Use `gh` to request and monitor the automated Codex review attached to a GitHub 
 
 ## Avoid duplicate requests
 
-- Read the latest Codex review summary before posting.
-- If a review for the same head commit is already running, reuse that run and wait; do not post another comment.
-- If no run for the current head is running, post exactly one top-level comment with `@codex review` and record the comment URL, time, and head commit. A previous completed review does not satisfy an explicit request to rerun.
+- Read the current PR head, latest Codex review summary, and review records before posting. Resolve the authenticated GitHub user and identify the Codex integration bot from existing PR metadata.
+- On the first trigger, record the full `headRefOid`, the top-level trigger comment URL / ID and creation time, and the request time in the current task context.
+- When resuming, inspect the authenticated user's existing `@codex review` trigger comments since the recorded request time. Query each candidate comment's reactions with `gh api repos/{owner}/{repo}/issues/comments/{comment_id}/reactions`.
+- A `👀` reaction from the Codex integration bot means the run is active even when no summary or review record exists yet. Reuse that run and wait; do not post another trigger. Correlate the reaction with the recorded trigger comment, request time, and head commit.
+- If the task context with the recorded head is unavailable, treat the latest unresolved trigger comment with a Codex `👀` reaction as active until its completion summary identifies the reviewed commit. If its head cannot be established, report that uncertainty and resume monitoring later; do not risk a duplicate request.
+- If a trigger comment was just posted and has not received a reaction or summary yet, allow up to 60 seconds for the integration to start before deciding that no run exists.
+- If a review for the same head commit is already running in the summary or review records, reuse it and wait; do not post another comment. A completed review for an earlier request does not satisfy an explicit request to rerun.
+- Only when no same-head run or unresolved trigger exists, read the PR head once more, then post exactly one top-level comment with `@codex review` and record its URL, ID, time, and head commit.
 
 ## Wait for this review
 
