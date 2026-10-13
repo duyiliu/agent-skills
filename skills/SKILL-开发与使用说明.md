@@ -193,6 +193,12 @@ disable-model-invocation: true
 小而明确、低风险、可逆；文件来源、Git 历史、普通代码定位、简单事实查询
 → 直接做
 
+明确要求在指定 GitHub PR 上触发 / 重跑 Codex 自动评审并等待结果
+→ github-codex-review
+
+普通本地代码审查或未指定 Codex 自动评审的 PR 审查
+→ 按用户要求直接审查，不发送 GitHub 评论
+
 完整业务需求 / 高成本契约变化
 → task-design
 → 用户确认
