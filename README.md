@@ -51,4 +51,4 @@ Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/
 
 ## GitHub collaboration
 
-- [github-codex-review](skills/github-codex-review/SKILL.md) — trigger and monitor Codex's automated review on a specified GitHub pull request.
+- [github-codex-review](skills/github-codex-review/SKILL.md) — trigger/resume Codex PR review; explicitly opt into a bounded fix → verify → commit/push → rereview loop (max 3 repair rounds).
