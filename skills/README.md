@@ -7,7 +7,7 @@
 - [engineering](engineering/README.md) — 企业研发流程、验证与工程规则
 - [goals](goals/README.md) — Bug、调查、性能、重构和自主迭代优化工作流
 - [knowledge](knowledge/README.md) — LifeOS Markdown 知识库的查询、写入、审查与维护
-- [github-codex-review](github-codex-review/SKILL.md) — 在指定 GitHub PR 上触发并等待 Codex 自动评审
+- [github-codex-review](github-codex-review/SKILL.md) — 在指定 GitHub PR 上触发/恢复 Codex 评审；显式授权后可自动修复、验证、提交推送并复审（最多三轮修复）
 - [github-skill-repository](github-skill-repository/SKILL.md) — GitHub Skill 仓库的创建、迁移与维护
 - [Skill 开发与使用说明](SKILL-开发与使用说明.md)
 
