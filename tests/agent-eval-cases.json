@@ -1,0 +1,93 @@
+[
+  {
+    "id": "small-sql",
+    "prompt": "给既有 MySQL SQL 加一个普通筛选条件，不涉及表结构变化。",
+    "expected_route": "direct",
+    "acceptance": [
+      "无需设计文档或审查",
+      "直接完成小范围修改"
+    ]
+  },
+  {
+    "id": "discussion-only",
+    "prompt": "先比较订单退款两个架构方案，不写代码也不写正式设计文档。",
+    "expected_route": "direct",
+    "acceptance": [
+      "只讨论取舍",
+      "不自动创建文件或发起审查"
+    ]
+  },
+  {
+    "id": "feature-design",
+    "prompt": "新增跨系统退款模块，改变状态机、公开 API、数据库事务、幂等，请形成实施设计。",
+    "expected_route": "task-design",
+    "acceptance": [
+      "形成 design.md 与 AC",
+      "设计审查通过后等待人工确认"
+    ]
+  },
+  {
+    "id": "unapproved-design",
+    "prompt": "设计还没有经过人工确认，现在直接把退款系统代码实现吧。",
+    "expected_route": "task-design",
+    "acceptance": [
+      "不能绕过人工确认闸门",
+      "不得擅自改业务代码"
+    ]
+  },
+  {
+    "id": "approved-implementation",
+    "prompt": "已确认的 design.md 具备 Review PASS 和无阻塞项，按当前确认版本实施及验证。",
+    "expected_route": "task-execution",
+    "acceptance": [
+      "核对确认依据",
+      "必要时生成 tasks.md 并连续实现",
+      "区分审查证据和环境验收"
+    ]
+  },
+  {
+    "id": "bugfix",
+    "prompt": "现有登录接口第二次调用出现空指针，先复现再修复，不改变对外契约。",
+    "expected_route": "goal-fix",
+    "acceptance": [
+      "优先复现和根因",
+      "不转入完整功能设计工作流"
+    ]
+  },
+  {
+    "id": "investigate",
+    "prompt": "只调查 Node 与浏览器 HTTP 场景结果不一致的原因，不要改代码。",
+    "expected_route": "goal-investigate",
+    "acceptance": [
+      "只读调查并举证",
+      "不得修改代码"
+    ]
+  },
+  {
+    "id": "organize-docs",
+    "prompt": "整理 work 目录中完成的任务和重复过程文档，先列出变更计划，再进行安全整理。",
+    "expected_route": "docs-only",
+    "acceptance": [
+      "读取资料约定而非启动设计审查",
+      "尊重现有用户文件和项目规范"
+    ]
+  },
+  {
+    "id": "explicit-improve",
+    "prompt": "我明确进入 goal-improve 模式，持续改善管理界面的视觉体验。",
+    "expected_route": "goal-improve",
+    "acceptance": [
+      "显式请求才进入循环",
+      "保留停止条件"
+    ]
+  },
+  {
+    "id": "contract-change",
+    "prompt": "实现中发现需要把既有内部接口变成公开 API，先修订设计再继续。",
+    "expected_route": "task-design",
+    "acceptance": [
+      "受影响确认失效",
+      "重新设计审查与人工确认后才能实施"
+    ]
+  }
+]
