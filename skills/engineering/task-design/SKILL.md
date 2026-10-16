@@ -7,15 +7,15 @@ description: 为值得先设计的日常研发任务建立或维护 design.md �
 
 ## 目标
 
-建立一个**足够、清晰、可验证的 \`design.md\` 设计基线**，只负责“做什么、哪些高成本契约不能随便变”。
+建立一个**足够、清晰、可验证的 `design.md` 设计基线**，只负责“做什么、哪些高成本契约不能随便变”。
 
-不在 \`design.md\` 维护执行进度、完成勾选或返工队列；这些属于 \`tasks.md\`，由 \`task-execution\` 维护。
+不在 `design.md` 维护执行进度、完成勾选或返工队列；这些属于 `tasks.md`，由 `task-execution` 维护。
 
 ## 何时触发
 
 满足任一条件时使用：
 
-- 用户明确要求正式设计、可实施方案或 \`design.md\`；
+- 用户明确要求正式设计、可实施方案或 `design.md`；
 - 新增完整业务功能 / 模块、外部系统接入、跨系统流程；
 - 核心数据结构、迁移、架构或跨模块改造；
 - 会形成或改变高成本契约：
@@ -55,15 +55,15 @@ description: 为值得先设计的日常研发任务建立或维护 design.md �
 优先级：
 
 1. 项目已有约定；
-2. \`work-convention\`；
-3. 默认 \`work/任务/<任务名>/design.md\`。
+2. `work-convention`；
+3. 默认 `work/任务/<任务名>/design.md`。
 
-同一任务只保留一个主 \`design.md\`。
+同一任务只保留一个主 `design.md`。
 
 创建或大改设计时读取：
 
-- \`references/任务设计规范.md\`
-- \`templates/design-template.md\`
+- `references/任务设计规范.md`
+- `templates/design-template.md`
 
 ### 3. 建立设计基线
 
@@ -79,7 +79,7 @@ description: 为值得先设计的日常研发任务建立或维护 design.md �
 
 ### 4. 定义验收
 
-使用 \`AC01\`、\`AC02\` 等稳定 ID。每个 AC 说明：
+使用 `AC01`、`AC02` 等稳定 ID。每个 AC 说明：
 
 - 验收什么；
 - 如何验证；
@@ -105,11 +105,11 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 
 ## Design Review 与人工确认
 
-默认一个 Builder 维护 \`design.md\`，自查后交给一个**只读 Reviewer**。优先独立上下文；不可用时使用 same-context，并记录实际模式。Reviewer 只找问题，不直接改设计。
+默认一个 Builder 维护 `design.md`，自查后交给一个**只读 Reviewer**。优先独立上下文；不可用时使用 same-context，并记录实际模式。Reviewer 只找问题，不直接改设计。
 
 主流程：
 
-\`\`\`text
+```text
 起草 design.md
 → Design Review
 → 修复 Critical / High
@@ -118,11 +118,11 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 → 阻塞确认项清零
 → 用户确认当前设计版本
 → 停止设计阶段
-\`\`\`
+```
 
 规则：
 
-- \`Critical / High\` 阻塞确认；\`Medium / Low\` 记录但不默认返工。
+- `Critical / High` 阻塞确认；`Medium / Low` 记录但不默认返工。
 - 首审覆盖当前设计和必要现状；复审只看未闭合 finding 与受影响范围。
 - 每个设计审查阶段默认最多 **3 轮**。第 3 轮仍 FAIL 时停止自动循环并报告剩余阻塞项。
 - PASS 后停止主动“继续优化设计”，不要为了清空 Medium / Low 再开一轮。
@@ -131,7 +131,7 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 - 用户确认时若同时改变高成本契约，不算确认：更新设计、重新审查受影响范围，再确认。
 - 普通实现细节不要求用户确认。
 
-仅在以下情况需要读取 \`references/design-review-lifecycle.md\`：
+仅在以下情况需要读取 `references/design-review-lifecycle.md`：
 
 - Review FAIL，需要进入复审 / 返工；
 - 恢复旧任务，需要继承轮次、范围或 Reviewer；
@@ -143,7 +143,7 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 先区分：
 
 - **实现没做到已确认契约** → 修实现，不重开设计；
-- **已确认高成本契约本身要改** → 更新 \`design.md\`、使受影响确认失效、回到本 Skill 审查并重新确认。
+- **已确认高成本契约本身要改** → 更新 `design.md`、使受影响确认失效、回到本 Skill 审查并重新确认。
 
 低成本实现细节变化不回填设计，也不重新找用户。
 
@@ -153,7 +153,7 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 
 设计阶段完成时应满足：
 
-- 唯一 \`design.md\` 已建立；
+- 唯一 `design.md` 已建立；
 - 高成本契约、关键边界、风险和 AC 清楚；
 - 阻塞确认项 = 0；
 - Design Review = PASS；
@@ -163,16 +163,16 @@ AC 描述结果，不写 Controller / Service / Mapper 等代码任务。
 
 ## 与其他 Skill 的关系
 
-- \`task-design\`：定义稳定设计基线。
-- \`work-convention\`：定义文档位置和生命周期。
-- \`task-execution\`：把已确认设计转成任务并实施。
-- Bug / 调查 / 重构 / 性能专项优先走对应 \`goal-*\`，不能因为步骤多就切成本 Skill。
+- `task-design`：定义稳定设计基线。
+- `work-convention`：定义文档位置和生命周期。
+- `task-execution`：把已确认设计转成任务并实施。
+- Bug / 调查 / 重构 / 性能专项优先走对应 `goal-*`，不能因为步骤多就切成本 Skill。
 
 ## 回复约定
 
 Review PASS、阻塞确认项清零后：
 
-\`\`\`text
+```text
 已创建/更新：<design.md>
 设计审查：PASS（independent | same-context）
 设计基线：<核心摘要>
@@ -180,6 +180,6 @@ Review PASS、阻塞确认项清零后：
 阻塞确认项：无
 非阻塞待确认项：<有则列出>
 下一步：请确认当前设计版本；确认后进入 task-execution
-\`\`\`
+```
 
-收到明确确认后记录确认依据和设计版本；若用户原始目标包含实现，则继续进入 \`task-execution\`。
+收到明确确认后记录确认依据和设计版本；若用户原始目标包含实现，则继续进入 `task-execution`。

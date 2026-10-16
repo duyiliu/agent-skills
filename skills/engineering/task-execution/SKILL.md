@@ -9,7 +9,7 @@ description: 将已确认设计或明确的完整工程交付目标转成 tasks.
 
 把已确认的设计或明确工程目标连续推进到可交付状态：
 
-\`\`\`text
+```text
 已确认目标 / design.md
 → tasks.md
 → 实现
@@ -19,33 +19,33 @@ description: 将已确认设计或明确的完整工程交付目标转成 tasks.
 → 修复阻塞 findings
 → PASS
 → 交付
-\`\`\`
+```
 
 默认只在设计阶段设置人工确认闸门。进入执行后不逐任务找用户确认，除非出现新的高成本设计变化或真正阻塞。
 
-Bug、只读调查、行为不变重构、性能优化仍优先走对应 \`goal-*\`，不能因为步骤多就由本 Skill 接管。
+Bug、只读调查、行为不变重构、性能优化仍优先走对应 `goal-*`，不能因为步骤多就由本 Skill 接管。
 
 ## 启动前
 
-读取项目规则、相关实现，以及已有 \`design.md / tasks.md\`。
+读取项目规则、相关实现，以及已有 `design.md / tasks.md`。
 
-如果当前任务触发了 \`task-design\`，必须同时满足：
+如果当前任务触发了 `task-design`，必须同时满足：
 
 - Design Review = PASS；
 - 阻塞确认项 = 0；
 - 用户已明确确认**当前设计版本**。
 
-否则停止执行并回到 \`task-design\`。状态字段本身不能替代用户授权。
+否则停止执行并回到 `task-design`。状态字段本身不能替代用户授权。
 
 ## tasks.md
 
 需要跨步骤持续状态时创建：
 
-\`\`\`text
+```text
 work/任务/<任务名>/tasks.md
-\`\`\`
+```
 
-创建时读取 \`templates/tasks-template.md\`。没有 \`design.md\` 也可存在 \`tasks.md\`，但高成本契约变化不能用任务清单代替设计。
+创建时读取 `templates/tasks-template.md`。没有 `design.md` 也可存在 `tasks.md`，但高成本契约变化不能用任务清单代替设计。
 
 ### 代码基线
 
@@ -74,16 +74,16 @@ work/任务/<任务名>/tasks.md
 
 只拆当前目标所需的一层，不预先展开几十个实现细节。
 
-有 \`design.md\` 时，开始实现前检查每个 \`ACxx\` 至少被一个 Task 或最终核验覆盖。漏覆盖直接补齐，不因此打断用户。
+有 `design.md` 时，开始实现前检查每个 `ACxx` 至少被一个 Task 或最终核验覆盖。漏覆盖直接补齐，不因此打断用户。
 
 ## 执行状态
 
 只使用：
 
-- \`pending\`
-- \`in_progress\`
-- \`blocked\`
-- \`done\`
+- `pending`
+- `in_progress`
+- `blocked`
+- `done`
 
 默认单 Builder 串行执行。只有任务依赖已满足、读写范围互不冲突且能分别验证时才并行；主 Agent 负责最终集成和真实验证。
 
@@ -91,7 +91,7 @@ work/任务/<任务名>/tasks.md
 
 ### 1. 选择任务
 
-选择第一个依赖满足的 \`pending\` 任务，标为 \`in_progress\`。
+选择第一个依赖满足的 `pending` 任务，标为 `in_progress`。
 
 ### 2. 实现
 
@@ -118,25 +118,25 @@ work/任务/<任务名>/tasks.md
 
 验证失败：
 
-1. 保持 \`in_progress\`；
+1. 保持 `in_progress`；
 2. 根据错误修复；
 3. 重跑相关验证。
 
-连续尝试没有获得新证据时，不盲目循环；默认第三次后标 \`blocked\` 并记录根因和已尝试方案。
+连续尝试没有获得新证据时，不盲目循环；默认第三次后标 `blocked` 并记录根因和已尝试方案。
 
 ### 5. 设计偏差
 
 - 实现没满足已确认契约 → 修实现；
-- 高成本契约本身必须改变 → 暂停受影响任务，更新 \`design.md\`，回到 \`task-design\` 审查并重新确认；
+- 高成本契约本身必须改变 → 暂停受影响任务，更新 `design.md`，回到 `task-design` 审查并重新确认；
 - 低成本实现变化 → 直接继续，不回填 design。
 
 ### 6. 完成任务
 
-只有验收满足且必要验证通过后才标 \`done\`，然后自动进入下一任务。
+只有验收满足且必要验证通过后才标 `done`，然后自动进入下一任务。
 
 ## 什么时候找用户
 
-只在以下情况进入 \`blocked\` 并找用户：
+只在以下情况进入 `blocked` 并找用户：
 
 - 缺失业务规则会改变核心行为；
 - 多个不可兼容方案且项目现状无法判断；
@@ -164,15 +164,15 @@ work/任务/<任务名>/tasks.md
 
 规则：
 
-- \`Critical / High\` 阻塞交付；\`Medium / Low\` 记录但不默认返工。
+- `Critical / High` 阻塞交付；`Medium / Low` 记录但不默认返工。
 - FAIL 后集中修复本轮阻塞 findings，再做增量复审。
-- 每个实现审查阶段默认最多 **3 轮**；第 3 轮仍 FAIL 时停止并标 \`blocked\`。
+- 每个实现审查阶段默认最多 **3 轮**；第 3 轮仍 FAIL 时停止并标 `blocked`。
 - PASS 后停止主动追加修改，不为了清空 Medium / Low 再开一轮。
 - 高风险改动不能跳过 Review；独立 Reviewer 不可用时可降级 same-context。
 - 纯新增、低风险、有完整可复跑验证且不改既有链路的改动，只有用户明确同意时才可进一步降级或跳过，并记录依据。
 - Review PASS 不代表未执行的环境验收已经通过。
 
-仅在以下情况读取 \`references/implementation-review-lifecycle.md\`：
+仅在以下情况读取 `references/implementation-review-lifecycle.md`：
 
 - Review FAIL，需要创建返工任务 / 增量复审；
 - 恢复旧任务，需要继承 Reviewer、轮次或 finding；
@@ -183,12 +183,12 @@ work/任务/<任务名>/tasks.md
 
 完成必须满足：
 
-- 本次实现和返工任务均 \`done\`，没有未解决的 \`blocked\`；
+- 本次实现和返工任务均 `done`，没有未解决的 `blocked`；
 - 有 design 时 AC 已覆盖到实现 / 验证；
 - 已授权范围内的关键确定性验证通过；
 - Implementation Review = PASS，或低风险场景按用户明确同意跳过并有记录；
 - Critical / High = 0；
-- \`tasks.md\` 为最终真实状态。
+- `tasks.md` 为最终真实状态。
 
 代码完成但环境验收未执行时，只报告“实现完成，环境验收待执行”，不能说已实测通过。
 
@@ -196,13 +196,13 @@ work/任务/<任务名>/tasks.md
 
 新会话恢复时：
 
-1. 读项目规则、\`design.md\`、\`tasks.md\`；
+1. 读项目规则、`design.md`、`tasks.md`；
 2. 核对代码基线和当前 diff；
-3. 不信任旧的 \`in_progress\` 自报，先核对真实代码；
+3. 不信任旧的 `in_progress` 自报，先核对真实代码；
 4. 恢复未闭合任务、Review 轮次和 findings；
 5. 从第一个真实可执行任务继续。
 
-只有需要处理复杂审查状态时再读 \`references/implementation-review-lifecycle.md\`。
+只有需要处理复杂审查状态时再读 `references/implementation-review-lifecycle.md`。
 
 文件只能恢复状态，不提供跨会话自动运行能力；无人值守 / 跨机器调度交给外部 orchestrator。
 
@@ -210,7 +210,7 @@ work/任务/<任务名>/tasks.md
 
 完成后一次汇报：
 
-\`\`\`text
+```text
 已完成：<目标>
 设计：<design.md 或无>
 执行：<tasks.md 或直接完成>
@@ -219,6 +219,6 @@ work/任务/<任务名>/tasks.md
 AC 覆盖：<结果>
 环境验收：<已通过 / 待执行 / 不适用>
 遗留：<Medium/Low 或无>
-\`\`\`
+```
 
-存在 \`blocked\` 时只报告部分完成和真实阻塞，不宣称整体完成。
+存在 `blocked` 时只报告部分完成和真实阻塞，不宣称整体完成。

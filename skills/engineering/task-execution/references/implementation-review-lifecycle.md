@@ -15,9 +15,9 @@
 
 记录：
 
-- \`independent\`
-- \`same-context\`
-- \`按风险分层跳过（依据）\`
+- `independent`
+- `same-context`
+- `按风险分层跳过（依据）`
 
 高风险改动包括：
 
@@ -44,8 +44,8 @@
 
 Reviewer 读取：
 
-- 已确认的 \`design.md\`（若有）；
-- \`tasks.md\`；
+- 已确认的 `design.md`（若有）；
+- `tasks.md`；
 - 代码基线；
 - 本次 diff，包括新增未跟踪文件；
 - 真实构建 / 测试 / 验收证据。
@@ -80,7 +80,7 @@ Reviewer 读取：
 
 FAIL 后：
 
-1. 将 Critical / High 转成 \`R01\`、\`R02\` 等返工任务；
+1. 将 Critical / High 转成 `R01`、`R02` 等返工任务；
 2. Builder 集中修复并执行必要验证；
 3. 提供修订摘要和证据；
 4. 原 Reviewer 做增量复审；
@@ -88,7 +88,7 @@ FAIL 后：
 
 默认最多 3 轮，包含首审。技术返工、版本递增、换 Reviewer、新会话都不重置当前阶段计数。只有用户实质改变目标或高成本契约，才为受影响范围开始新阶段。
 
-第 3 轮仍 FAIL 时停止自动循环，标记 \`blocked\` 并保留剩余 findings 和证据。
+第 3 轮仍 FAIL 时停止自动循环，标记 `blocked` 并保留剩余 findings 和证据。
 
 ## PASS
 
