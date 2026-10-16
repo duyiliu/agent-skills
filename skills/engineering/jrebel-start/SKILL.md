@@ -90,17 +90,21 @@ Standalone JRebel 不依赖 IDE 插件。安装路径优先从进程/用户环�
 - 先确认日志出现 JRebel banner/监控目录，再确认应用自身就绪消息或项目明确的 readiness 接口，并核对目标端口监听。端口开放或通用 health 成功只说明进程存活，不足以证明目标业务功能生效。
 - 验证具体改动时，按用户要求调用业务接口或既有场景；不擅自执行全量测试、制造/清理业务数据。
 - Java 类变更热加载时查看 `Reloading class ...` 等日志；mapper XML 是否热加载取决于项目插件配置，查看 `Reloading SQL maps`。若未出现热加载日志，先检查产物同步和监控目录，不直接断言启动失败。
-- **JRebel 日志网页**：先确认 `node --version` 可用；`cd` 到目标仓库根目录并启动 viewer 必须放在同一次 shell 调用中，因为 viewer 的日志根目录由 `process.cwd()` 决定，静态网页文件则相对 `server.mjs` 所在 skill 目录读取：
+- **JRebel 日志网页**：先确认 `node --version` 可用；`cd` 到目标仓库根目录并启动 viewer 必须放在同一次 shell 调用中；下列占位目录由 Agent 按当前加载的 Skill 安装位置替换，不得假定在 ~/.agents/skills/，因为 viewer 的日志根目录由 `process.cwd()` 决定，静态网页文件则相对 `server.mjs` 所在 skill 目录读取：
   ```bash
-  cd "<目标仓库根目录>" && node "$HOME/.agents/skills/jrebel-start/scripts/log-viewer/server.mjs"
+  cd "<目标仓库根目录>" && node "<当前实际安装的 jrebel-start Skill 目录>/scripts/log-viewer/server.mjs"
   ```
-  打开 `http://127.0.0.1:8199`。右侧监控当前仓库 `.tmp` 下符合 `jrebel-local-*.stdout.log` 的日志，支持增量跟踪、过滤、着色及暂停续传；左侧为当前项目的只读文件树与带行号文本预览，按需展开目录，UTF-8 文本最多预览前 256KB，二进制仅显示元信息。文件区默认收起，点击顶部“展开文件区”显示，点击“收起文件区”隐藏；侧栏可拖动或用方向键调整宽度。文件接口拒绝路径穿越、符号链接，隐藏 `.git`、`node_modules`、`.env*`、常见私钥与许可文件；不提供上传、修改、删除，不承担内容脱敏，禁止对外网开放。若 Node 不可用则使用下方命令行跟踪；若 8199 已被占用，先确认是否为当前项目的 viewer 再复用，不终止未知进程。代码更新需核验归属后重启 viewer，不需要重启后端 JVM。相对脚本路径应按实际 skill 安装位置解析。\n\n  文件浏览扩大了本机可读范围：仅绑定 `127.0.0.1`，不要将端口代理或转发到局域网或公网；目录浏览的过滤不代表所有项目配置都已脱敏。仅本机可信用户使用。\n\n  若无 `.tmp` 或尚无启动日志，文件树仍可使用，日志区显示暂无启动日志。
+  打开 `http://127.0.0.1:8199`。右侧监控当前仓库 `.tmp` 下符合 `jrebel-local-*.stdout.log` 的日志，支持增量跟踪、过滤、着色及暂停续传；左侧为当前项目的只读文件树与带行号文本预览，按需展开目录，UTF-8 文本最多预览前 256KB，二进制仅显示元信息。文件区默认收起，点击顶部“展开文件区”显示，点击“收起文件区”隐藏；侧栏可拖动或用方向键调整宽度。文件接口拒绝路径穿越、符号链接，隐藏 `.git`、`node_modules`、`.env*`、常见私钥与许可文件；不提供上传、修改、删除，不承担内容脱敏，禁止对外网开放。若 Node 不可用则使用下方命令行跟踪；若 8199 已被占用，先确认是否为当前项目的 viewer 再复用，不终止未知进程。代码更新需核验归属后重启 viewer，不需要重启后端 JVM。相对脚本路径应按实际 skill 安装位置解析。
+
+  文件浏览扩大了本机可读范围：仅绑定 `127.0.0.1`，不要将端口代理或转发到局域网或公网；目录浏览的过滤不代表所有项目配置都已脱敏。仅本机可信用户使用。
+
+  若无 `.tmp` 或尚无启动日志，文件树仍可使用，日志区显示暂无启动日志。
 - 无需网页时可跟踪最新日志：
   ```bash
   tail -f "$(ls -t .tmp/jrebel-local-*.stdout.log | head -1)" \
     | grep --line-buffered -E "JRebel:|Reloading|ERROR"
   ```
-- JRebel 自身的许可证和 agent 错误见 `%USERPROFILE%\.jrebel\jrebel.log`。
+- JRebel 自身的许可证和 agent 错误优先从实际配置的 `REBEL_BASE` / `-Drebel.base` 下查找 `jrebel.log`；若未单独配置，Windows 默认位置通常为 `%USERPROFILE%\.jrebel\jrebel.log`，Linux/macOS 为 `~/.jrebel/jrebel.log`。
 
 ## 6. 已知边界与故障处理
 
