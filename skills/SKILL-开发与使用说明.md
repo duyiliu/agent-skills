@@ -189,51 +189,9 @@ disable-model-invocation: true
 
 ## 6. 当前 Skill 路由
 
-~~~text
-小而明确、低风险、可逆；文件来源、Git 历史、普通代码定位、简单事实查询
-→ 直接做
+以 [Skills 收纳目录的默认路由](README.md#默认路由) 为**唯一权威路由索引**；此处不另复制完整清单，避免说明与 Skill description 漂移。
 
-明确要求在指定 GitHub PR 上触发 / 重跑 Codex 自动评审并等待结果
-→ github-codex-review
-
-普通本地代码审查或未指定 Codex 自动评审的 PR 审查
-→ 按用户要求直接审查，不发送 GitHub 评论
-
-完整业务需求 / 高成本契约变化
-→ task-design
-→ 用户确认
-→ task-execution
-
-Bug 修复
-→ goal-fix
-
-复杂技术异常的多步根因调查，只要求解释、不要求修改
-→ goal-investigate
-
-调查并修复
-→ goal-fix
-
-行为不变的结构优化
-→ goal-refactor
-
-性能问题
-→ goal-performance
-
-自主发现问题并持续优化（UI、游戏、交互等）
-→ 显式 goal-improve
-
-明确要求搜索 / 保存 / 更新个人长期知识
-→ knowledge
-
-明确要求查重 / 过期核对 / 知识库质量审查
-→ knowledge-review（默认只读）
-~~~
-
-主 Skill 由任务性质决定，不能因为 Bug 修复、专项性能或重构需要多轮，就自动改由 `task-execution` 主导。需要跨步骤记录可在当前工作流维护任务状态；跨会话自动运行另需编排器。
-
-高成本契约包括：核心业务流程/状态机、DB Schema/核心模型、公共 API、权限、消息/事件、迁移/兼容、并发/幂等/事务、多系统协作关系。
-
-> 高成本契约前置，低成本实现细节渐进。
+路由优先考虑任务性质与风险，不因“修复”“方案”“优化”等关键词机械触发。仅探讨选项或比较设计时直接回答；当用户要求正式设计交付、实际实施触及高成本契约时才按索引进入设计闸门。Skill 的自动选择属于运行器行为，不能用 README 保证每次路由成功。
 
 ## 7. Engineering 主流程
 

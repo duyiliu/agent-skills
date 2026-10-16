@@ -23,7 +23,7 @@ for (const path of paths.filter(p => p.endsWith('/SKILL.md') || p.endsWith('\\SK
   const description = text.match(/^description:\s*(.+)$/m)?.[1]?.trim();
   if (!name || !description) throw new Error(`Missing frontmatter: ${path}`);
   const sourcePath = posix(relative(root, path));
-  const category = sourcePath.startsWith('skills/engineering/') ? 'engineering' : sourcePath.startsWith('skills/goals/') ? 'goals' : 'management';
+  const category = sourcePath.startsWith('skills/engineering/') ? 'engineering' : sourcePath.startsWith('skills/goals/') ? 'goals' : sourcePath.startsWith('skills/knowledge/') ? 'knowledge' : 'management';
   const files = [];
   for (const file of paths.filter(p => p.startsWith(dir + '\\') || p.startsWith(dir + '/'))) {
     const repoPath = posix(relative(root, file));
