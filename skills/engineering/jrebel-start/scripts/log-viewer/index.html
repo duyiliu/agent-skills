@@ -52,8 +52,8 @@ let pending = '', decoder = new TextDecoder('utf-8', { stream: true });
 let lineCount = 0;
 
 const classify = (t) =>
-  t.includes('JRebel:') ? 'jr'
-  : /ERROR|Exception|Caused by:/.test(t) ? 'err'
+  /ERROR|Exception|Caused by:/.test(t) ? 'err'
+  : t.includes('JRebel:') ? 'jr'
   : /\bWARN\b/.test(t) ? 'warn'
   : /Preparing:|Parameters:|<== *Total|==>|SqlSession|JDBC Connection/.test(t) ? 'sql'
   : '';

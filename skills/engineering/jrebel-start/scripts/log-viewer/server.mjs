@@ -52,9 +52,9 @@ const server = http.createServer((req, res) => {
     if (!Number.isFinite(offset) || offset < 0 || offset > size) {
       offset = Math.max(0, size - TAIL_CHUNK); // 首次/切文件/越界：从尾部 256KB 起
     }
-    if (size - offset > TAIL_CHUNK) offset = size - TAIL_CHUNK; // 合法但极陈旧的 offset 同样截到 chunk 上限，避免一次返回全文件
     if (offset === size) return json(res, 200, { offset, size, b64: '' });
-    const buf = Buffer.allocUnsafe(size - offset);
+    const take = Math.min(size - offset, TAIL_CHUNK); // 每次最多向前读一个 chunk：积压由客户端分页追赶，不静默丢段
+    const buf = Buffer.allocUnsafe(take);
     let read = 0;
     const fd = fs.openSync(full, 'r');
     try {
@@ -62,7 +62,7 @@ const server = http.createServer((req, res) => {
     } finally {
       fs.closeSync(fd);
     }
-    return json(res, 200, { offset: size, size, b64: buf.subarray(0, read).toString('base64') });
+    return json(res, 200, { offset: offset + read, size, b64: buf.subarray(0, read).toString('base64') });
   }
 
   if (u.pathname === '/' || u.pathname === '/index.html') {
