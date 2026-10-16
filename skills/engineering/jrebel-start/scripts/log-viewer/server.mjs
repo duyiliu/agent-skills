@@ -40,8 +40,9 @@ const server = http.createServer((req, res) => {
 
   if (u.pathname === '/api/tail') {
     const name = u.searchParams.get('name') || '';
-    if (!NAME_RE.test(name)) return json(res, 400, { error: 'bad name' });
+    if (!NAME_RE.test(name) || path.basename(name) !== name) return json(res, 400, { error: 'bad name' }); // 仅接受纯 basename，拒绝任何路径分隔符
     const full = path.join(LOG_DIR, name);
+    if (path.dirname(path.resolve(full)) !== path.resolve(LOG_DIR)) return json(res, 400, { error: 'bad path' });
     let size;
     try {
       size = fs.statSync(full).size;
