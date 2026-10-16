@@ -6,9 +6,9 @@ This repository is the canonical source for the migrated LifeOS Skills. Preserve
 
 ## 单一维护源（Single Source of Truth）
 
-**本仓库是全部可复用 Agent Skills 的唯一维护位置。** [LifeOS](https://github.com/duyiliu/LifeOS) 只保留 Skill 仓库链接；[ai-dev-handbook](https://github.com/duyiliu/ai-dev-handbook) 仅维护规则、配置、MCP 和工具工程资料，不再保留 `skills/` 目录。
+**本仓库是其所收录通用 Agent Skills 的唯一维护位置。** 工具型 Skill 可以独立建仓并拥有各自的单一维护源；例如 [project-runner](https://github.com/duyiliu/project-runner) 已迁出。 [LifeOS](https://github.com/duyiliu/LifeOS) 只保留 Skill 仓库链接；[ai-dev-handbook](https://github.com/duyiliu/ai-dev-handbook) 仅维护规则、配置、MCP 和工具工程资料，不再保留 `skills/` 目录。
 
-- 新增、审查和修改 Skill 只在本仓库进行；其他项目不得再维护 Skill 源文件副本。
+- 本仓库已收录的通用 Skill 只在本仓库维护；已独立的工具 Skill 在其各自仓库维护，不再复制进本仓库。
 - Codex、Claude Code 等用户级安装目录是运行时副本，更新后需按对应运行器规则同步，不视为新的权威来源。
 - 历史来源仓库的旧提交仅供溯源；尤其不要把已废弃的 `goal-feature` 重新迁入。确定性新功能统一使用 `task-design → 用户确认 → task-execution`。
 
@@ -25,7 +25,7 @@ node scripts/install-skills.mjs --runner codex --check
 # Claude Code 使用 --runner claude
 ```
 
-安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
+安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录（因此旧 `jrebel-start` 本机副本不会自动移除，迁移后需手动卸载）；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
 
 ## Engineering
 
@@ -35,8 +35,11 @@ node scripts/install-skills.mjs --runner codex --check
 - [git-commit](skills/engineering/git-commit/SKILL.md) — prepare and create scoped, atomic Git commits.
 - [ext-plus-backend-dev-rules](skills/engineering/ext-plus-backend-dev-rules/SKILL.md) — development rules for Ext Plus backend projects.
 - [work-convention](skills/engineering/work-convention/SKILL.md) — organize design and execution materials under `work/`.
-- [jrebel-start](skills/engineering/jrebel-start/SKILL.md) — initialize standalone JRebel, auto-match the project launch flow, and verify hot reload.
 - [Engineering index](skills/engineering/README.md)
+
+## Independent tool Skills
+
+- [project-runner](https://github.com/duyiliu/project-runner) — Java/JRebel project startup and logging; moved from `jrebel-start`, maintained independently. Install with `npx skills add duyiliu/project-runner --skill project-runner -g`.
 
 ## Knowledge
 

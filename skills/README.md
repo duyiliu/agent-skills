@@ -30,4 +30,4 @@
 - `goal-improve` 是仅手动进入的 Mode Skill。Codex 安装副本保留 `agents/openai.yaml`，并移除 Claude 专用 frontmatter 字段。
 - 安装和触发规则见 [Skill 开发与使用说明](SKILL-开发与使用说明.md)。
 
-本仓库是 Skill 源文件的权威来源；客户端安装副本由运行器发现和加载，不会因仓库更新自动变化。
+本仓库是这里收录的 Skill 源文件权威来源；已独立迁出的工具型 Skill（如 [project-runner](https://github.com/duyiliu/project-runner)）在其独立仓库维护。客户端安装副本由运行器发现和加载，不会因仓库更新自动变化。

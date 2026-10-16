@@ -75,7 +75,10 @@
 - [git-commit](git-commit/SKILL.md) — 原子提交、提交消息、暂存与推送流程
 - [ext-plus-backend-dev-rules](ext-plus-backend-dev-rules/SKILL.md) — Ext Plus 后端规范，包含 7 份 references
 - [work-convention](work-convention/SKILL.md) — `work/` 研发资料存放、分层与生命周期；design 保存稳定基线，tasks 保存动态执行状态
-- [jrebel-start](jrebel-start/SKILL.md) — standalone JRebel 环境初始化、安装与授权流程，按项目自动匹配启动方式并验证热加载；附带日志网页 viewer
+
+## 外部独立工具 Skill
+
+- [project-runner](https://github.com/duyiliu/project-runner) — 从 `jrebel-start` 迁出；Java/JRebel 项目启动与日志 Viewer 由该独立仓库唯一维护，跨项目管理设计见其 `docs/design.md`（尚未实现）。
 
 ## 职责边界
 
