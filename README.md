@@ -35,6 +35,7 @@ node scripts/install-skills.mjs --runner codex --check
 - [git-commit](skills/engineering/git-commit/SKILL.md) — prepare and create scoped, atomic Git commits.
 - [ext-plus-backend-dev-rules](skills/engineering/ext-plus-backend-dev-rules/SKILL.md) — development rules for Ext Plus backend projects.
 - [work-convention](skills/engineering/work-convention/SKILL.md) — organize design and execution materials under `work/`.
+- [jrebel-start](skills/engineering/jrebel-start/SKILL.md) — initialize standalone JRebel, auto-match the project launch flow, and verify hot reload.
 - [Engineering index](skills/engineering/README.md)
 
 ## Knowledge
