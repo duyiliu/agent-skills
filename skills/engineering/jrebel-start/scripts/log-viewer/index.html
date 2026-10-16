@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>JRebel 日志跟踪</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #1e1e1e; color: #d4d4d4; font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 13px; }
+  header { position: sticky; top: 0; z-index: 2; background: #252526; border-bottom: 1px solid #333; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  header b { color: #4ec9b0; margin-right: 4px; }
+  select, input[type=text] { background: #1e1e1e; color: #d4d4d4; border: 1px solid #3c3c3c; border-radius: 4px; padding: 4px 8px; font: inherit; }
+  input[type=text] { width: 220px; }
+  button { background: #0e639c; color: #fff; border: 0; border-radius: 4px; padding: 5px 12px; font: inherit; cursor: pointer; }
+  button.ghost { background: #3a3d41; }
+  button.on { background: #4ec9b0; color: #1e1e1e; }
+  label.chk { display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
+  #status { margin-left: auto; color: #9cdcfe; font-size: 12px; }
+  #status.bad { color: #f48771; }
+  #log { padding: 6px 0 40vh; white-space: pre-wrap; word-break: break-all; }
+  .line { padding: 0 12px; line-height: 1.45; }
+  .line.jr   { color: #4ec9b0; background: rgba(78,201,176,.08); }
+  .line.err  { color: #f48771; background: rgba(244,135,113,.10); }
+  .line.warn { color: #dcdcaa; }
+  .line.sql  { color: #6a6a6a; }
+  .mode-jr  .line:not(.jr):not(.err) { display: none; }
+  .mode-err .line:not(.err) { display: none; }
+  #empty { color: #666; padding: 20px 12px; }
+</style>
+</head>
+<body>
+<header>
+  <b id="projName"></b><b style="color:#9cdcfe">JRebel 日志</b>
+  <select id="fileSel" title="选择要跟踪的启动日志"></select>
+  <button class="ghost mode on" data-mode="" id="mAll">全部</button>
+  <button class="ghost mode" data-mode="jr" id="mJr">JRebel/错误</button>
+  <button class="ghost mode" data-mode="err" id="mErr">仅错误</button>
+  <input type="text" id="kw" placeholder="关键词过滤（回车生效，清空恢复）">
+  <button id="pauseBtn">⏸ 暂停</button>
+  <label class="chk"><input type="checkbox" id="autoScroll" checked>自动滚动</label>
+  <button class="ghost" id="clearBtn">清屏</button>
+  <span id="status">连接中…</span>
+</header>
+<div id="log"><div id="empty">加载中…</div></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const logEl = $('#log'), statusEl = $('#status'), fileSel = $('#fileSel');
+const MODE_RE = { jr: /JRebel:|ERROR|Exception|Caused by:/ };
+
+let file = null, offset = -1, paused = false, mode = '', keyword = '';
+let pending = '', decoder = new TextDecoder('utf-8', { stream: true });
+let lineCount = 0;
+
+const classify = (t) =>
+  t.includes('JRebel:') ? 'jr'
+  : /ERROR|Exception|Caused by:/.test(t) ? 'err'
+  : /\bWARN\b/.test(t) ? 'warn'
+  : /Preparing:|Parameters:|<== *Total|==>|SqlSession|JDBC Connection/.test(t) ? 'sql'
+  : '';
+
+function passes(t, cls) {
+  if (mode && !(MODE_RE[mode].test(t))) return false;
+  if (keyword && !t.toLowerCase().includes(keyword)) return false;
+  return true;
+}
+
+function addLine(text) {
+  if (text.trim() === '' && keyword) return;
+  const cls = classify(text);
+  const div = document.createElement('div');
+  div.className = 'line' + (cls ? ' ' + cls : '');
+  div.textContent = text || ' ';
+  div.style.display = passes(text, cls) ? '' : 'none';
+  logEl.appendChild(div);
+  lineCount++;
+  if (lineCount > 8000) { // 防内存膨胀：裁掉最早的 2000 行
+    let n = 2000;
+    while (n-- > 0 && logEl.firstElementChild) logEl.firstElementChild.remove();
+    lineCount = logEl.childElementCount;
+  }
+}
+
+function refilter() {
+  for (const el of logEl.children) {
+    const cls = el.className.replace('line', '').trim();
+    el.style.display = passes(el.textContent, cls) ? '' : 'none';
+  }
+}
+
+const fmtSize = (n) => n > 1048576 ? (n / 1048576).toFixed(1) + 'M' : Math.round(n / 1024) + 'K';
+
+function setStatus(text, bad) { statusEl.textContent = text; statusEl.className = bad ? 'bad' : ''; }
+
+async function refreshList() {
+  const r = await fetch('/api/logs');
+  const { logs, project } = await r.json();
+  $('#projName').textContent = project;
+  document.title = `${project} · JRebel 日志`;
+  const cur = fileSel.value;
+  fileSel.innerHTML = '';
+  for (const l of logs) {
+    const o = document.createElement('option');
+    const live = Date.now() - l.mtimeMs < 10000 ? ' ●live' : '';
+    o.value = l.name;
+    o.textContent = `${project} · ${l.name.replace('jrebel-local-', '').replace('.stdout.log', '')} (${fmtSize(l.size)})${live}`;
+    fileSel.appendChild(o);
+  }
+  if (cur && logs.some((l) => l.name === cur)) fileSel.value = cur;
+  else if (!file || !logs.some((l) => l.name === file)) fileSel.selectedIndex = 0;
+  if (fileSel.value !== file) switchTo(fileSel.value);
+}
+
+async function poll() {
+  if (paused || !file) return;
+  try {
+    const r = await fetch(`/api/tail?name=${encodeURIComponent(file)}&offset=${offset}`);
+    const j = await r.json();
+    if (j.b64) {
+      const bin = atob(j.b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const text = pending + decoder.decode(bytes, { stream: true });
+      const parts = text.split('\n');
+      pending = parts.pop();
+      $('#empty')?.remove();
+      for (const p of parts) addLine(p);
+      if ($('#autoScroll').checked) window.scrollTo(0, document.body.scrollHeight);
+    }
+    offset = j.offset;
+    setStatus(`${file} · ${fmtSize(j.size)} · ${lineCount} 行 · 更新 ${new Date().toLocaleTimeString()}`);
+  } catch {
+    setStatus('连接失败，重试中…', true);
+  }
+}
+
+async function switchTo(name) {
+  file = name;
+  offset = -1;
+  pending = '';
+  decoder = new TextDecoder('utf-8', { stream: true });
+  lineCount = 0;
+  logEl.innerHTML = '<div id="empty">加载中…</div>';
+  await poll();
+}
+
+fileSel.addEventListener('change', () => switchTo(fileSel.value));
+$('#pauseBtn').addEventListener('click', (e) => {
+  paused = !paused;
+  e.target.textContent = paused ? '▶ 继续' : '⏸ 暂停';
+  if (!paused) poll();
+});
+$('#clearBtn').addEventListener('click', () => { logEl.innerHTML = ''; lineCount = 0; });
+$('#kw').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { keyword = e.target.value.trim().toLowerCase(); refilter(); }
+});
+for (const btn of document.querySelectorAll('.mode')) {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode').forEach((b) => b.classList.remove('on'));
+    btn.classList.add('on');
+    mode = btn.dataset.mode;
+    logEl.className = mode ? 'mode-' + mode : '';
+  });
+}
+
+refreshList();
+setInterval(poll, 1000);
+setInterval(refreshList, 5000);
+</script>
+</body>
+</html>
