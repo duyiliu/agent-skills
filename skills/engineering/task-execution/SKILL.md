@@ -39,13 +39,13 @@ Bug、只读调查、行为不变重构、性能优化仍优先走对应 `goal-*
 
 ## tasks.md
 
-需要跨步骤持续状态时创建：
+只在多个可独立验收任务、跨会话恢复，或需要记录验证/阻塞/返工状态时创建；一次性小修改不额外生成文档。优先沿用项目已有约定（包括历史 `dev/`），无约定时使用：
 
 ```text
 work/任务/<任务名>/tasks.md
 ```
 
-创建时读取 `templates/tasks-template.md`。没有 `design.md` 也可存在 `tasks.md`，但高成本契约变化不能用任务清单代替设计。
+创建时读取 `templates/tasks-template.md`。同任务的 `design.md` 与 `tasks.md` 放在一起：`design.md` 只保存稳定契约与 AC，`tasks.md` 是唯一动态进度来源（任务状态、核验、阻塞、Review 返工），不要复制完整设计。没有 `design.md` 也可有 `tasks.md`，但高成本契约变化不能用任务清单代替设计。
 
 ### 代码基线
 

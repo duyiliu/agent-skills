@@ -228,9 +228,11 @@ design.md
 
 默认不要求用户逐 Task 确认。只有高成本契约变化、缺失关键业务规则、权限/凭据、不可逆动作等真正阻塞才重新找用户。
 
-### 7.3 work-convention
+### 7.3 资料约定（不再作为独立 Skill）
 
-只负责 `design.md / tasks.md` 的位置、职责和生命周期，不重复定义设计方法和执行算法。
+`task-design` 自带 `design.md` 的路径、稳定内容与生命周期规则；`task-execution` 自带 `tasks.md` 的路径、执行状态与恢复规则。跨任务决策、场景测试、归档与上线资料见 [工作资料约定](engineering/工作资料约定.md)，不作为第三个工作流入口。
+
+优先遵循项目已有目录规则（包括历史 `dev/`），小任务不默认生成 `work/` 文件。已安装的旧 `work-convention` 副本需确认后手动卸载。
 
 ## 8. Goal Skills
 
@@ -279,7 +281,7 @@ Goal Skill 只定义当前会话中的方法、证据、停止条件；并不赋
 ~~~text
 task-design/templates/design-template.md
 task-execution/templates/tasks-template.md
-work-convention/templates/决策模板.md
+task-design/templates/决策模板.md
 ~~~
 
 ### scripts/
