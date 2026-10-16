@@ -1,7 +1,7 @@
 const $ = selector => document.querySelector(selector);
-const labels = { all: '全部 Skills', engineering: '工程研发', goals: 'Goal 工作流', management: '仓库管理' };
-const icons = { all: '▦', engineering: '⌘', goals: '◎', management: '↗' };
-const english = { engineering: 'ENGINEERING', goals: 'GOALS', management: 'MANAGEMENT' };
+const labels = { all: '全部 Skills', engineering: '工程研发', goals: 'Goal 工作流', knowledge: '知识管理', management: '仓库管理' };
+const icons = { all: '▦', engineering: '⌘', goals: '◎', knowledge: '▤', management: '↗' };
+const english = { engineering: 'ENGINEERING', goals: 'GOALS', knowledge: 'KNOWLEDGE', management: 'MANAGEMENT' };
 let catalog, category = 'all', activeSkill, activeFile, routeWasOpened = false;
 const dialog = $('#detail');
 function el(tag, text, className) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (className) n.className = className; return n; }

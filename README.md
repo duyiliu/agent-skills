@@ -15,6 +15,18 @@ This repository is the canonical source for the migrated LifeOS Skills. Preserve
 
 Browse the public [Agent Skills website](https://duyiliu.github.io/agent-skills/) to search, read, copy, and download Skill files. Editing opens the corresponding GitHub file and requires repository write access. GitHub Actions rebuilds and publishes the website after changes to Skills or website code. See [website maintenance](website/README.md).
 
+## 安装与校验（Codex / Claude Code）
+
+从本仓库克隆后，在仓库根目录运行（需要 Node.js 22+）：
+
+```powershell
+node scripts/install-skills.mjs --runner codex
+node scripts/install-skills.mjs --runner codex --check
+# Claude Code 使用 --runner claude
+```
+
+安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
+
 ## Engineering
 
 - [task-design](skills/engineering/task-design/SKILL.md) — establish a design baseline for substantial or high-contract changes.

@@ -86,30 +86,22 @@ disable-model-invocation: true
 
 用于禁止 Claude 自动选择该 Skill。
 
-### Codex 安装兼容
+### 安装与一致性检查（Codex / Claude Code）
 
-本仓库源文件保留 Claude Code 的 `disable-model-invocation` 扩展；Codex 安装副本应移除这个 Claude 专用字段，同时保留 `agents/openai.yaml`：
+统一通过仓库脚本从**同一份源文件**生成运行器安装副本，避免手工复制时漏文件或忘记移除 Codex 不识别的 Claude 字段。无需额外 npm 包：
 
 ```powershell
-$src = ".\skills\goals"
-$dst = "$HOME\.codex\skills"
-
-"goal-fix","goal-refactor","goal-improve","goal-performance","goal-investigate" |
-  ForEach-Object {
-    Copy-Item "$src\$_" "$dst\$_" -Recurse -Force
-  }
-
-$improve = Join-Path $dst "goal-improve\SKILL.md"
-(Get-Content $improve) |
-  Where-Object { $_ -notmatch '^disable-model-invocation:\s*true\s*$' } |
-  Set-Content $improve -Encoding utf8
+node scripts/install-skills.mjs --runner codex
+node scripts/install-skills.mjs --runner codex --check
+node scripts/install-skills.mjs --runner claude
+node scripts/install-skills.mjs --runner claude --check
 ```
 
-这样同一份能力定义仍然复用，只在安装层处理运行器扩展差异。
+默认安装到用户主目录的 `~/.codex/skills` 或 `~/.claude/skills`，也可使用 `--dest <路径>` 安装到临时目录进行检查。脚本只更新本仓库中同名 Skill 的文件，不删除旧文件或无关 Skill；如目标目录是未识别的已有目录则拒绝覆盖。
 
-**Codex 显式调用验证：** 安装后在真实 Codex 对话中输入小写规范名 `$goal-improve`，确认 Skill 正文确实加载，而不只是显示文字。已知某些版本的 `$` 选择器会提交带大写的显示名，导致大小写不匹配；此时优先手动输入小写名。`codex debug prompt-input` 不经过完整的 turn-time Skill 注入流程，不能单独用来判断调用失败。参见 [Codex #40600](https://github.com/openai/codex/issues/40600) 和 [#43727](https://github.com/openai/codex/issues/43727)。
+`goal-improve` 源文件保留 Claude 的 `disable-model-invocation: true` 与 Codex 的 `agents/openai.yaml`；安装 Codex 时只在副本删除 Claude 专用字段，且检查模式验证该适配。升级后重新运行安装脚本并在真实客户端验证显式调用；不能用脚本检查代替运行器的真实加载验证。
 
-若所在入口仍不能显式加载，明确报告本次为兼容性受限，可在对话中**手动读取并遵循** `goal-improve/SKILL.md`（不宣称已通过 Skill 机制调用）；不要悄悄移除 `allow_implicit_invocation: false`，以免无意启用自动选择。
+**Codex 显式调用验证：** 输入小写规范名 `$goal-improve`，确认 Skill 正文确实加载。已知部分版本 `$` 选择器显示名大小写可能不匹配；此时直接输入小写。见 [Codex #40600](https://github.com/openai/codex/issues/40600) 和 [#43727](https://github.com/openai/codex/issues/43727)。
 
 ## 多 Agent 协作原则
 

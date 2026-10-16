@@ -13,7 +13,9 @@
 
 ## 默认路由
 
-- 企业业务功能、系统集成、DB / 公共 API / 权限 / 状态机等高成本契约变化 → `engineering/task-design + task-execution`
+**本节是仓库内任务路由的权威索引**。其他指南引用这里，不另维护完整路由表。
+
+- 企业完整业务功能、系统集成、DB / 公共 API / 权限 / 状态机等高成本契约变化，进入实际设计交付/实施时 → `engineering/task-design + task-execution`；单纯探讨方案先直接在对话中讨论，不默认创建 design 或触发 Review
 - 不改变高成本契约的 Bug / 只读调查 / 性能 / 行为不变重构 → 对应 `goals/goal-*`，与任务耗时无关
 - 希望 Agent 自主发现问题并多轮优化（如 UI、游戏手感）→ 用户显式进入 `goals/goal-improve`
 - 小而明确的一次性修改、简单事实查询、目录 / 文件来源和 Git 历史查询 → 直接完成，不因“为什么 / 调查 / 修复 / 优化”等关键词强行调用 Goal Skill

@@ -6,7 +6,16 @@ on:
     paths:
       - 'skills/**'
       - 'website/**'
+      - 'scripts/install-skills.mjs'
       - '.github/workflows/pages.yml'
+      - 'README.md'
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'website/**'
+      - 'scripts/install-skills.mjs'
+      - '.github/workflows/pages.yml'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
@@ -36,12 +45,31 @@ jobs:
           node --check website/app.js
           node --check website/build.mjs
           node website/build.mjs
+      - name: Check Codex and Claude Skill install adapters
+        run: |
+          node --check scripts/install-skills.mjs
+          tmp="$(mktemp -d)"
+          node scripts/install-skills.mjs --runner codex --dest "$tmp/codex"
+          node scripts/install-skills.mjs --runner codex --dest "$tmp/codex" --check
+          node scripts/install-skills.mjs --runner claude --dest "$tmp/claude"
+          node scripts/install-skills.mjs --runner claude --dest "$tmp/claude" --check
+          grep -q '^disable-model-invocation: true$' "$tmp/claude/goal-improve/SKILL.md"
+          if grep -q '^disable-model-invocation:' "$tmp/codex/goal-improve/SKILL.md"; then exit 1; fi
+      - name: Check website Knowledge classification
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          const data=JSON.parse(fs.readFileSync('website/dist/catalog.json','utf8'));
+          const ks=data.entries.filter(e=>e.name==='knowledge'||e.name==='knowledge-review');
+          if(ks.length!==2 || ks.some(e=>e.category!=='knowledge')) process.exit(1);
+          "
       - name: Upload static website
         uses: actions/upload-pages-artifact@v4
         with:
           path: website/dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:
