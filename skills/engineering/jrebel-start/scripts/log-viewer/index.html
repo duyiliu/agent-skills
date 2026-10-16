@@ -45,7 +45,7 @@
 <script>
 const $ = (s) => document.querySelector(s);
 const logEl = $('#log'), statusEl = $('#status'), fileSel = $('#fileSel');
-const MODE_RE = { jr: /JRebel:|ERROR|Exception|Caused by:/ };
+const MODE_RE = { jr: /JRebel:|ERROR|Exception|Caused by:/, err: /ERROR|Exception|Caused by:/ };
 
 let file = null, offset = -1, paused = false, mode = '', keyword = '';
 let pending = '', decoder = new TextDecoder('utf-8', { stream: true });
@@ -59,7 +59,7 @@ const classify = (t) =>
   : '';
 
 function passes(t, cls) {
-  if (mode && !(MODE_RE[mode].test(t))) return false;
+  if (MODE_RE[mode] && !MODE_RE[mode].test(t)) return false; // 新增模式缺谓词时降级为不过滤，而非抛错
   if (keyword && !t.toLowerCase().includes(keyword)) return false;
   return true;
 }
@@ -159,6 +159,7 @@ for (const btn of document.querySelectorAll('.mode')) {
     btn.classList.add('on');
     mode = btn.dataset.mode;
     logEl.className = mode ? 'mode-' + mode : '';
+    refilter(); // 重算已缓冲行的 inline 显隐，避免切回"全部"后残留 display:none
   });
 }
 
