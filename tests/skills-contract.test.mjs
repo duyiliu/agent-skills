@@ -7,7 +7,7 @@ import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const read = p => readFileSync(join(root, p), 'utf8');
+const read = p => readFileSync(join(root, p), 'utf8').replace(/\r\n/g, '\n');
 const names = ['task-design', 'task-execution'];
 const filename = n => 'skills/engineering/' + n + '/SKILL.md';
 
