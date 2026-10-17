@@ -25,7 +25,7 @@ node scripts/install-skills.mjs --runner codex --check
 # Claude Code 使用 --runner claude
 ```
 
-安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录（因此旧 `jrebel-start` 本机副本不会自动移除，迁移后需手动卸载）；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
+安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录（已迁移的 `jrebel-start` 和合并的 `work-convention` 本机副本都不会自动移除，确认替代 Skill 可用后需手动卸载）；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
 
 ## Engineering
 
@@ -34,7 +34,7 @@ node scripts/install-skills.mjs --runner codex --check
 - [ai-test-checkpoints](skills/engineering/ai-test-checkpoints/SKILL.md) — black-box quality checks for Web management interfaces.
 - [git-commit](skills/engineering/git-commit/SKILL.md) — prepare and create scoped, atomic Git commits.
 - [ext-plus-backend-dev-rules](skills/engineering/ext-plus-backend-dev-rules/SKILL.md) — development rules for Ext Plus backend projects.
-- [work-convention](skills/engineering/work-convention/SKILL.md) — organize design and execution materials under `work/`.
+- [研发资料约定](skills/engineering/工作资料约定.md) — decision, archival and release-document conventions (documentation, not an installable Skill).
 - [Engineering index](skills/engineering/README.md)
 
 ## Independent tool Skills

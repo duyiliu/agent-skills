@@ -74,7 +74,11 @@
 
 - [git-commit](git-commit/SKILL.md) — 原子提交、提交消息、暂存与推送流程
 - [ext-plus-backend-dev-rules](ext-plus-backend-dev-rules/SKILL.md) — Ext Plus 后端规范，包含 7 份 references
-- [work-convention](work-convention/SKILL.md) — `work/` 研发资料存放、分层与生命周期；design 保存稳定基线，tasks 保存动态执行状态
+
+## 工作资料约定（普通文档，不是 Skill）
+
+- [工作资料约定](工作资料约定.md)：跨任务决策、场景测试、归档与上线资料；`design.md`、`tasks.md` 的路径和生命周期已内置于 `task-design` / `task-execution`。
+- 已安装的旧 `work-convention` 不会被安装脚本自动清理，更新后应确认旧副本不会继续触发。
 
 ## 外部独立工具 Skill
 
@@ -83,7 +87,6 @@
 ## 职责边界
 
 - `task-design`：想清楚并把高成本契约变成可确认、可验收的 design；Review 是其内部能力
-- `work-convention`：资料放哪里、各文件职责和生命周期
 - `task-execution`：只在“设计审查 PASS + 阻塞确认项为 0 + 人工已确认”后拆任务、实现、验证和 Review
 - Reviewer 的“独立”是优先级，不是硬依赖；无法独立时降级 same-context 并明确记录
 - commit / push / deploy / 生产写入等外部动作不由 task-execution 自动授权
