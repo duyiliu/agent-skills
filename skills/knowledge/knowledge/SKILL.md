@@ -1,6 +1,6 @@
 ---
 name: knowledge
-description: Search, capture, update, and maintain the user's persistent Markdown knowledge base. Use when the user explicitly asks to remember, save, retrieve, summarize from prior notes, or update reusable knowledge. Do not auto-activate for routine coding, simple file navigation, or every completed task; project documents remain in their own repositories.
+description: Search, capture, update, and maintain the user's persistent Markdown knowledge base (LifeOS). Use when the user explicitly asks to remember/save ("记下来", "存进知识库"), retrieve/summarize from prior notes ("查我的笔记", "知识库里有没有"), or update reusable knowledge. Do not auto-activate for routine coding, simple file navigation, or every completed task; project documents remain in their own repositories.
 ---
 
 # Knowledge
@@ -37,7 +37,20 @@ Windows 用户级配置示例：
    - `behind > 0`：执行 `git pull --ff-only`；若因本地未提交改动冲突而失败，**停止并报告**，不 stash、不 reset、不 rebase、不 merge、不 force。
    - `ahead > 0`：本地有未推送提交，本地内容不比远端旧，查询可继续，但须在结论中注明"基于本地未推送的 commit X，另一端可能看不到"；写入前提示用户，由用户决定是否先推送，不自动 push。
    - 两者皆为 0：已对齐。
-5. 校验 `git rev-parse HEAD` 与 `git rev-parse @{upstream}` 一致后，才算同步完成；记录同步到的分支与 commit，随结论一并说明。
+5. 校验 `git rev-parse HEAD` 与 `git rev-parse @{upstream}` 一致后，才算同步完成；记录同步到的分支与 commit，随结论一并说明。`pull` 拉入新提交后，重新读取受影响的目标文档再作答或写入，不得使用同步前的缓存内容。
+
+在 vault 根目录按固定顺序一次执行（`<branch>` 替换为当前分支，通常 master）：
+
+~~~bash
+git fetch --quiet origin <branch>
+git status --porcelain=v1                                  # 已暂存 / 未暂存改动
+git diff --name-only --diff-filter=U                       # 有输出 = 未解决冲突，停止
+git rev-list --left-right --count 'HEAD...@{upstream}'     # 左=ahead 右=behind
+git pull --ff-only                                          # 仅 behind>0 时执行
+git rev-parse HEAD && git rev-parse '@{upstream}'          # 两者必须一致
+~~~
+
+`@{upstream}` 在代码块中一律加引号，PowerShell 下不加会被解析为哈希表字面量。
 
 禁止项：不得用 `git stash`、`reset --hard`、`pull --rebase`、`checkout --`、`force push` 来"修复"同步；不得覆盖无关的未提交修改；不得在同步失败时继续读写。
 
@@ -73,10 +86,10 @@ Windows 用户级配置示例：
 
 1. 提交前先 `git fetch --quiet origin <branch>`；若 `behind > 0`，仅在不覆盖本次写入的前提下 `git pull --ff-only`，否则停止并报告，避免在分叉上提交。
 2. **只暂存本次实际改动的笔记路径**（写操作时记录的明确清单）。禁止 `git add -A` / `git add .` / 目录通配；暂存后用 `git diff --cached --name-only` 核对，出现范围外文件立即 `git restore --staged` 并停止。
-3. 对暂存内容做敏感检查：凭据、Token、私钥、Cookie、客户/患者数据一律不得提交；账号资料等范围外文件中的完整 Key 不得混入。命中即撤消暂存并停止。
+3. 对暂存内容做敏感检查：`git diff --cached | grep -iE 'password|passwd|token|secret|api[_-]?key|private key|ghp_|sk-|BEGIN .*PRIVATE KEY'`，无输出即通过（grep 退出码 1 属正常）。凭据、Token、私钥、Cookie、客户/患者数据一律不得提交；账号资料等范围外文件中的完整 Key 不得混入。命中后逐条人工复核，确属真实凭据则撤消暂存并停止（普通文档提到 token 一词不算泄露）。
 4. 提交信息沿用仓库既有风格（如 `docs(knowledge): ...`），中文；不改写历史、不 amend 已推送提交。
-5. `git push origin HEAD:<branch>`。失败（网络、凭据、非快进）时**停止并如实报告"本地已提交，未推送"**，不 force、不重试轰炸、不 reset 本地提交。
-6. 报告 commit、推送结果和本次改动文件清单；推送未成功不得声称"已同步"。
+5. `git push origin HEAD:<branch>`。失败（网络、凭据、非快进）时**停止并如实报告"本地已提交，未推送"**，不 force、不重试轰炸、不 reset 本地提交。非快进时再 `git fetch` 一次，报告与远端的差异及涉及文件，由用户决定合并方式。
+6. 推送后校验 `git rev-parse HEAD` 与 `git rev-parse '@{upstream}'` 一致，才算推送完成。报告固定包含四项：同步到的 commit → 改动文件清单 → 本次 commit sha → 推送结果。推送未成功不得声称"已同步"。
 
 ## 并发
 

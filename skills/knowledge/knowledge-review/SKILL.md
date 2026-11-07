@@ -1,6 +1,6 @@
 ---
 name: knowledge-review
-description: Audit an existing Markdown knowledge base for duplicated, conflicting, stale, unsupported, or misplaced knowledge and propose evidence-based corrections. Use only when the user explicitly asks for knowledge review, cleanup, deduplication, or a periodic audit; do not trigger for ordinary note lookup or general code review.
+description: Audit an existing Markdown knowledge base (LifeOS) for duplicated, conflicting, stale, unsupported, or misplaced knowledge and propose evidence-based corrections. Use only when the user explicitly asks for knowledge review/cleanup/deduplication ("知识库审查", "查重", "清理过时内容") or a periodic audit; do not trigger for ordinary note lookup or general code review.
 ---
 
 # Knowledge Review
@@ -13,7 +13,7 @@ description: Audit an existing Markdown knowledge base for duplicated, conflicti
 - 验证 Home.md 与既有 LifeOS 目录结构；未找到时不创建新仓库、不跨目录扫描个人磁盘。
 - 默认只读；审查时不 checkout、reset、清空工作区、不修改项目仓库。
 - 按用户限定的范围或最近发生变化的笔记开展；未给范围时，先从 30_资料/知识/ 的索引和高复用文档做小批量审查，不全库盲扫。
-- **同步前置**：审查开始前必须执行 knowledge Skill 的「同步前置」协议（fetch → ff-only pull → 校验 HEAD 与 upstream 一致）；同步失败或无法确认版本时停止，不得基于可能过期的笔记出具审查结论。本 Skill 的同步只做拉取，不提交、不推送、不清理工作区。
+- **同步前置**：审查开始前必须执行 knowledge Skill 的「同步前置」协议（fetch → ff-only pull → 校验 HEAD 与 upstream 一致）；同步失败或无法确认版本时停止，不得基于可能过期的笔记出具审查结论。审查阶段只做拉取，不提交、不推送、不清理工作区。工作区存在未提交改动时，在报告中注明审查基于工作区当前内容、这些改动尚未推送；存在未解决冲突时停止。
 
 ## 审查检查点
 
@@ -38,7 +38,7 @@ description: Audit an existing Markdown knowledge base for duplicated, conflicti
 
 - 输出审查范围、已确认问题、待验证项、建议修订、实际改动（如有）、同步到的 commit，以及有改动时的 commit 与推送结果。
 - 没有问题时明确说明“在已审查范围内未发现”，不要声称全库无问题。
-- 同步前置未完成、远端不可达、工作区有已暂存文件或冲突时，停止审查并说明下一步，不得给出“全库无问题”类结论。
+- 同步前置未完成、远端不可达、存在未解决冲突时，停止审查并说明下一步，不得给出“全库无问题”类结论；仅有未提交改动时按上文注明后继续只读审查。
 - 有实际改动但提交或推送失败时，停止并如实报告"本地已提交，未推送"或提交失败原因，不得声称"修复已完成并同步"。
 - 缺少知识库访问、来源核验能力、需要用户判断的决策取舍、Git 冲突或敏感数据风险时，停止相应操作并说明下一步。
 - 不启动后台循环；定期审查只能由用户手动调用或外部已授权调度触发。

@@ -23,17 +23,29 @@ Windows PowerShell：
 - 清理、审计、查重、发现过时内容 → knowledge-review（仅明确发起审查时）。
 - 当前项目的设计文档/接口说明 → 项目内既有规范和 task-design/task-execution；不应分流到知识库。
 - Git 提交/推送 → 写入后由本 Skill 按受限文件范围执行 commit + push（用户已明确授权）；沿用 git-commit 的提交风格，但不通过 Skill 名称获得范围外授权。
-- **任何知识检索、审查或写入之前** → 先执行两个 Skill 共用的同步前置（`git fetch` → `git pull --ff-only` → 校验 `HEAD` 与 `@{upstream}` 一致），失败即停止并报告，不得静默使用可能过期的内容。
+- **任何知识检索、审查或写入之前** → 先执行两个 Skill 共用的同步前置（`git fetch` → `git pull --ff-only` → 校验 `HEAD` 与 `'@{upstream}'` 一致），失败即停止并报告，不得静默使用可能过期的内容。
 
 ## 客户端安装
 
-从本仓库将相应目录完整复制到 Codex 的 ~/.codex/skills/ 或 Claude Code 的 ~/.claude/skills/；Pi 根据其 Skill 发现路径配置安装。仓库更新不会自动部署到各客户端。
+从本仓库将相应目录完整复制到各客户端 Skill 目录（Codex ~/.codex/skills/、Claude Code ~/.claude/skills/ 等）；Pi 按其发现路径配置。仓库更新不会自动部署，维护时可运行 `node scripts/sync-local-copies.mjs` 把 SSOT 同步到本机运行时副本。
 
 ## 完整闭环（由 Skill 自己执行）
 
 两个 Skill 的读写闭环全部由 Skill 当场完成，用户已明确授权：
 
-1. **任何读写笔记之前**：同步前置 `git fetch` → `git pull --ff-only` → 校验 `HEAD` 与 `@{upstream}` 一致；失败即停止并报告，不得静默使用可能过期的内容。
-2. **写入完成之后**：只暂存本次实际改动的笔记路径、做敏感检查、commit、`git push`；推送失败如实报告"本地已提交，未推送"，不 force。只读查询不产生提交。
+1. **任何读写笔记之前**：同步前置，在 vault 根目录按固定顺序执行，校验一致才继续：
+
+~~~bash
+git fetch --quiet origin <branch>
+git status --porcelain=v1
+git diff --name-only --diff-filter=U                       # 有输出 = 冲突，停止
+git rev-list --left-right --count 'HEAD...@{upstream}'     # 左=ahead 右=behind
+git pull --ff-only                                          # 仅 behind>0
+git rev-parse HEAD && git rev-parse '@{upstream}'          # 必须一致
+~~~
+
+   失败即停止并报告；`pull` 拉入新提交后重新读取目标文档再作答。
+
+2. **写入完成之后**：只暂存本次实际改动的笔记路径、对暂存 diff 做敏感检查、commit、`git push`；推送后再校验 `HEAD` 与 `@{upstream}` 一致，失败如实报告"本地已提交，未推送"，不 force。只读查询不产生提交。
 
 同步前置只做拉取，不提交、不推送、不清理工作区，也不用 stash / reset / force 绕过冲突；它只保证本机与 origin 上该分支对齐，不保证另一端未推送的改动或并发写入。写入后的提交只用明确文件清单，禁止 `git add -A`，禁止把账号/凭据类文件混入。详见各 SKILL.md。
