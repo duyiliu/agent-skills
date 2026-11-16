@@ -46,21 +46,30 @@
     ]
   },
   {
-    "id": "bugfix",
+    "id": "bugfix-no-invoke",
     "prompt": "现有登录接口第二次调用出现空指针，先复现再修复，不改变对外契约。",
-    "expected_route": "goal-fix",
+    "expected_route": "direct",
     "acceptance": [
-      "优先复现和根因",
-      "不转入完整功能设计工作流"
+      "未显式调用 goal-fix，不进入 Goal 工作流",
+      "按普通 bug 修复直接完成，优先复现和根因"
     ]
   },
   {
-    "id": "investigate",
-    "prompt": "只调查 Node 与浏览器 HTTP 场景结果不一致的原因，不要改代码。",
-    "expected_route": "goal-investigate",
+    "id": "explicit-fix",
+    "prompt": "使用 goal-fix 修复登录接口第二次调用空指针的问题，保持对外契约不变。",
+    "expected_route": "goal-fix",
     "acceptance": [
-      "只读调查并举证",
-      "不得修改代码"
+      "显式调用进入 goal-fix",
+      "复现和根因优先，不转入完整功能设计工作流"
+    ]
+  },
+  {
+    "id": "investigate-no-invoke",
+    "prompt": "只调查 Node 与浏览器 HTTP 场景结果不一致的原因，不要改代码。",
+    "expected_route": "direct",
+    "acceptance": [
+      "未显式调用 goal-investigate，不进入 Goal 工作流",
+      "只读调查并举证，不得修改代码"
     ]
   },
   {

@@ -9,7 +9,7 @@
 - Skill 名称/frontmatter、references 与 templates 实际存在。
 - design 人工确认闸门、execution 审查与验证条件，以及原 work-convention 迁移后的文件结构。
 - 在操作系统临时目录中真实调用 Codex / Claude Skill 安装器并执行 --check；测试结束后清除临时目录。
-- agent-eval-cases.json 定义 10 个真实 Agent 路由与执行验收场景，CI 只检查用例定义。
+- agent-eval-cases.json 定义 12 个真实 Agent 路由与执行验收场景，CI 只检查用例定义。
 
 ## 真实 Agent 行为验收（尚未自动化）
 

@@ -6,11 +6,11 @@
 
 | Skill | 默认意图 | 触发建议 |
 |---|---|---|
-| `goal-fix` | Bug 根因与修复 | 自动 + 手动 |
-| `goal-refactor` | 保持行为稳定的重构 | 自动 + 手动 |
-| `goal-performance` | 基于测量的性能优化 | 自动 + 手动 |
-| `goal-investigate` | 根因调查 | 自动 + 手动 |
-| `goal-improve` | 自主发现问题、修改、验证、反复优化直到收敛 | **仅手动进入自主循环** |
+| `goal-fix` | Bug 根因与修复 | 仅手动 |
+| `goal-refactor` | 保持行为稳定的重构 | 仅手动 |
+| `goal-performance` | 基于测量的性能优化 | 仅手动 |
+| `goal-investigate` | 根因调查 | 仅手动 |
+| `goal-improve` | 自主发现问题、修改、验证、反复优化直到收敛 | 仅手动 |
 
 `goal-feature` 已移除。确定性新功能统一走：
 
@@ -31,23 +31,24 @@ task-design
 - 小改动不要因为匹配到关键词就进入 Goal 长循环
 - 任一 Goal 执行中如果发现必须改变高成本契约，立即回到 `task-design`
 
-## 自动触发边界
+## 触发边界（全部仅手动）
 
-- **先判断是否需要专项方法，再判断属于哪个 Skill。** 简单、明确、低风险、无需多步证据分析的任务直接完成，即使出现“为什么、调查、修复、优化、重构”等关键词也不自动进入 Goal。
-- 文件或目录从哪来、谁提交的、Git 历史、文档查找、普通代码定位 → 直接查文件 / Git / 文档，不触发 `goal-investigate`。
-- 需要跨代码路径、日志、运行态或多个竞争假设追查技术异常，但只要求解释 → `goal-investigate`；要求修复 → `goal-fix`。
-- 性能与重构只有在需要系统性测量、验证或保持复杂行为契约时才自动使用对应 Goal；简易改动直接做。
-- 用户**显式调用**具体 Skill 时不以任务复杂度拒绝调用；`goal-improve` 保持仅显式触发。Skill 描述提高路由准确率，但不能保证运行器百分之百正确选择。
+Goal Skill 一律**禁止自动触发**：各 `SKILL.md` frontmatter 已加 `disable-model-invocation: true`（Agent Skills 规范字段，Pi 等运行器强制隐藏；Codex 另有 `agents/openai.yaml` 的 `allow_implicit_invocation: false`），description 同时声明 Manual-invocation-only。只在用户显式调用时进入。
+
+- 即使出现“为什么、调查、修复、优化、重构”等关键词，也直接按普通任务完成，不自动进入 Goal。
+- 文件或目录从哪来、谁提交的、Git 历史、文档查找、普通代码定位 → 直接查文件 / Git / 文档。
+- 用户显式调用具体 Skill 时，不以任务复杂度拒绝调用。
+- 运行器对 description 的路由不再适用；显式调用是唯一入口。
 
 ## 触发模型
 
 Skill 核心描述只说明“什么时候适用”，不在正文绑定某个客户端的命令语法。
 
-- 自动触发：运行器根据 Skill description 判断任务匹配
-- 手动触发：用户使用当前运行器提供的 Skill 调用方式
+- 自动触发：已禁用。所有 Goal Skill 通过 `disable-model-invocation: true`（及 Codex 的 `allow_implicit_invocation: false`）从自动模型选择中隐藏
+- 手动触发：用户使用当前运行器的 Skill 调用方式，显式调用是唯一入口
 - Skill 内迭代：在当前会话按证据循环，不隐含持久任务、后台进程或自动重启。无人值守、跨会话恢复或跨机器调度需另配 Pi Goal / Hermes 等编排工具
 
-`goal-fix / goal-refactor / goal-performance / goal-investigate` 默认允许自动 + 手动。
+`goal-fix / goal-refactor / goal-performance / goal-investigate` 与 `goal-improve` 一致：仅手动。
 
 `goal-improve` 是一个明确的**自主优化模式**：用户只给目标和边界，Agent 自己检查 → 找问题 → 计划 → 修改 → 测试 → 评审 → 继续，直到达到停止条件。只有用户显式调用时才进入；普通优化请求不会自动变成长循环。
 
