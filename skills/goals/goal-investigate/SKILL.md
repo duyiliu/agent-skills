@@ -1,6 +1,7 @@
 ---
 name: goal-investigate
-description: Read-only, evidence-driven root-cause investigation of unexplained technical failures, behavior discrepancies, or suspected defects requiring multi-step tracing or competing-hypothesis checks. Auto-select only when systematic diagnosis is needed; do not use for simple facts, file or folder provenance, Git history or ownership queries, documentation lookup, or routine code navigation. If the user requests a fix, choose goal-fix. Explicit invocation is allowed.
+description: "Read-only, evidence-driven root-cause investigation of unexplained technical failures, behavior discrepancies, or suspected defects requiring multi-step tracing or competing-hypothesis checks. Manual-invocation-only: enter only when the user explicitly invokes this skill, never auto-select from ordinary investigation or diagnosis requests. Do not use for simple facts, file or folder provenance, Git history or ownership queries, documentation lookup, or routine code navigation. If the user requests a fix, choose goal-fix."
+disable-model-invocation: true
 ---
 
 # Goal Investigate

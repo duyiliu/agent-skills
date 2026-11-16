@@ -1,6 +1,7 @@
 ---
 name: goal-performance
-description: Diagnose and improve meaningful runtime or resource bottlenecks with a baseline, profiling, correctness checks, and comparable before-and-after measurement. Auto-select for performance work that genuinely requires investigation or repeated measurement, not routine SQL edits, simple configuration changes, or generic quick lookups. Do not use for behavior-changing redesign; explicit invocation is allowed.
+description: "Diagnose and improve meaningful runtime or resource bottlenecks with a baseline, profiling, correctness checks, and comparable before-and-after measurement. Manual-invocation-only: enter only when the user explicitly invokes this skill, never auto-select from ordinary performance requests. Do not use for routine SQL edits, simple configuration changes, generic quick lookups, or behavior-changing redesign."
+disable-model-invocation: true
 ---
 
 # Goal Performance

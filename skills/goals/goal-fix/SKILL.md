@@ -1,6 +1,7 @@
 ---
 name: goal-fix
-description: Diagnose and repair a bug or regression through root-cause evidence, a focused fix, and verification. Auto-select when the repair benefits from nontrivial diagnosis or regression checks, not for an obvious, small localized edit. Requested fixes stay in this workflow even across multiple rounds; do not use for read-only questions or contract redesign. Explicit invocation is also allowed.
+description: "Diagnose and repair a bug or regression through root-cause evidence, a focused fix, and verification. Manual-invocation-only: enter only when the user explicitly invokes this skill, never auto-select from ordinary bug reports or fix requests. Do not use for read-only questions or contract redesign. A multi-round fix stays in this workflow once invoked."
+disable-model-invocation: true
 ---
 
 # Goal Fix

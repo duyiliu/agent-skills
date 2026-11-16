@@ -1,6 +1,7 @@
 ---
 name: goal-refactor
-description: Improve nontrivial internal code structure while preserving behavior, APIs, and persistence semantics, with caller inspection and regression verification. Auto-select when the restructuring needs deliberate scope and behavior checks; not for simple renames, formatting, or small obvious cleanup. Multi-step refactors remain in this workflow; explicit invocation is allowed.
+description: "Improve nontrivial internal code structure while preserving behavior, APIs, and persistence semantics, with caller inspection and regression verification. Manual-invocation-only: enter only when the user explicitly invokes this skill, never auto-select from ordinary refactoring requests. Do not use for simple renames, formatting, or small obvious cleanup. Multi-step refactors remain in this workflow once invoked."
+disable-model-invocation: true
 ---
 
 # Goal Refactor
