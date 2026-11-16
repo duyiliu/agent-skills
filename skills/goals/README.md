@@ -33,7 +33,9 @@ task-design
 
 ## 触发边界（全部仅手动）
 
-Goal Skill 一律**禁止自动触发**：各 `SKILL.md` frontmatter 已加 `disable-model-invocation: true`（Agent Skills 规范字段，Pi 等运行器强制隐藏；Codex 另有 `agents/openai.yaml` 的 `allow_implicit_invocation: false`），description 同时声明 Manual-invocation-only。只在用户显式调用时进入。
+Goal Skill 一律**禁止自动触发**：各 `SKILL.md` frontmatter 已加 `disable-model-invocation: true`（Agent Skills 规范字段，Pi / Claude 等运行器强制隐藏），description 同时声明 Manual-invocation-only。只在用户显式调用时进入。
+
+> **Codex 特例（0.146 实测）**：`disable-model-invocation: true` 会被 Codex 校验报错（must be false），且 `agents/openai.yaml` 的 `allow_implicit_invocation: false` 会把 Skill 从模型可见列表整个移除——显式 `$skill` 也一并失效。因此 Codex 副本既不含 `disable-model-invocation` 也不含 `agents/openai.yaml`，仅靠 description 的 Manual-invocation-only 措辞约束（实测隐式不触发、显式 `$goal-fix` 可用）。
 
 - 即使出现“为什么、调查、修复、优化、重构”等关键词，也直接按普通任务完成，不自动进入 Goal。
 - 文件或目录从哪来、谁提交的、Git 历史、文档查找、普通代码定位 → 直接查文件 / Git / 文档。
@@ -44,7 +46,7 @@ Goal Skill 一律**禁止自动触发**：各 `SKILL.md` frontmatter 已加 `dis
 
 Skill 核心描述只说明“什么时候适用”，不在正文绑定某个客户端的命令语法。
 
-- 自动触发：已禁用。所有 Goal Skill 通过 `disable-model-invocation: true`（及 Codex 的 `allow_implicit_invocation: false`）从自动模型选择中隐藏
+- 自动触发：已禁用。Pi / Claude 通过 `disable-model-invocation: true` 从自动模型选择中隐藏；Codex 靠 description 的 Manual-invocation-only 措辞约束（该版本不提供可靠的硬性隐藏且不影响显式调用）
 - 手动触发：用户使用当前运行器的 Skill 调用方式，显式调用是唯一入口
 - Skill 内迭代：在当前会话按证据循环，不隐含持久任务、后台进程或自动重启。无人值守、跨会话恢复或跨机器调度需另配 Pi Goal / Hermes 等编排工具
 
@@ -62,14 +64,7 @@ Codex 的显式调用示例：
 $goal-improve 把当前工作台持续打磨到成熟商业 SaaS 水准
 ```
 
-`goal-improve/agents/openai.yaml`：
-
-```yaml
-policy:
-  allow_implicit_invocation: false
-```
-
-用于禁止 Codex 隐式选择该 Skill；不能据此假定特定 Codex 版本、入口的显式调用必然可靠。
+**不要使用 `agents/openai.yaml` 的 `allow_implicit_invocation: false`。** Codex 0.146 实测：该配置会把 Skill 从模型可见列表整个移除，显式 `$skill` 调用也随之失效（模型看不到名字就无法加载）；而官方文档所称 "explicit $skill invocation still works" 在该版本未验证。当前做法是 Codex 副本移除 `disable-model-invocation`（Codex 不识别，会报 must be false 校验错误），仅依赖 description 的 Manual-invocation-only 措辞，实测隐式不触发、显式可用。
 
 ### Claude Code
 
@@ -100,7 +95,7 @@ node scripts/install-skills.mjs --runner claude --check
 
 默认安装到用户主目录的 `~/.codex/skills` 或 `~/.claude/skills`，也可使用 `--dest <路径>` 安装到临时目录进行检查。脚本只更新本仓库中同名 Skill 的文件，不删除旧文件或无关 Skill；如目标目录是未识别的已有目录则拒绝覆盖。
 
-`goal-improve` 源文件保留 Claude 的 `disable-model-invocation: true` 与 Codex 的 `agents/openai.yaml`；安装 Codex 时只在副本删除 Claude 专用字段，且检查模式验证该适配。升级后重新运行安装脚本并在真实客户端验证显式调用；不能用脚本检查代替运行器的真实加载验证。
+`goal-improve` 源文件保留 Claude 的 `disable-model-invocation: true`；安装 Codex 时在副本删除该字段（Codex 不识别），`agents/openai.yaml` 已移除（见上文 Codex 实测结论）。`scripts/sync-local-copies.mjs` 已按目标目录适配：Codex 副本移除 `disable-model-invocation` 并清理源已删除的资源文件。升级后重新运行安装脚本并在真实客户端验证显式调用；不能用脚本检查代替运行器的真实加载验证。
 
 **Codex 显式调用验证：** 输入小写规范名 `$goal-improve`，确认 Skill 正文确实加载。已知部分版本 `$` 选择器显示名大小写可能不匹配；此时直接输入小写。见 [Codex #40600](https://github.com/openai/codex/issues/40600) 和 [#43727](https://github.com/openai/codex/issues/43727)。
 

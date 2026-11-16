@@ -26,7 +26,7 @@
 ## 触发与兼容
 
 - Skill 描述说明适用范围；具体调用方式由运行器决定。
-- 所有 Goal Skill（`goal-fix / goal-refactor / goal-performance / goal-investigate / goal-improve`）均仅限手动调用，frontmatter 带 `disable-model-invocation: true`，不会出现在自动模型选择中。Codex 安装副本另保留 `agents/openai.yaml`（`allow_implicit_invocation: false`）并移除 Claude 专用字段。
+- 所有 Goal Skill（`goal-fix / goal-refactor / goal-performance / goal-investigate / goal-improve`）均仅限手动调用。Pi / Claude 副本 frontmatter 带 `disable-model-invocation: true`，不会出现在自动模型选择中；Codex 副本移除该字段（Codex 不识别）且不使用 `agents/openai.yaml`（0.146 会连显式调用一起隐藏），仅靠 description 的 Manual-invocation-only 措辞约束。
 - 安装和触发规则见 [Skill 开发与使用说明](SKILL-开发与使用说明.md)。
 
 本仓库是这里收录的 Skill 源文件权威来源；已独立迁出的工具型 Skill（如 [project-runner](https://github.com/duyiliu/project-runner)）在其独立仓库维护。客户端安装副本由运行器发现和加载，不会因仓库更新自动变化。

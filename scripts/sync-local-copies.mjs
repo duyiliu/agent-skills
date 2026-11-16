@@ -41,7 +41,12 @@ for (const dest of DESTS) {
     const rel = folder.slice(SRC.length + 1).replace(/\\/g, '/');
     const descLine = srcSkill.split(/\r?\n/).find(l => l.startsWith('description:'));
     // 保留源 frontmatter 中除 name 外的其余字段（如 disable-model-invocation），供各运行器禁用自动触发
-    const extraLines = srcSkill.split(/\r?\n/).filter(l => /^(license|compatibility|allowed-tools|disable-model-invocation):/.test(l));
+    // Codex 不识别 disable-model-invocation（0.146 会报 must be false 校验错误），仅靠 description 软约束
+    const isCodex = dest.includes('.codex');
+    const extraLines = srcSkill.split(/\r?\n/).filter(l => {
+      if (!/^(license|compatibility|allowed-tools|disable-model-invocation):/.test(l)) return false;
+      return !(isCodex && l.startsWith('disable-model-invocation:'));
+    });
     const nameLine = `name: ${name}`;
     const sha = treeSha('skills/' + rel);
     const fm = ['---', descLine, ...extraLines, 'metadata:', `    github-path: skills/${rel}`, '    github-ref: refs/heads/main', '    github-repo: https://github.com/duyiliu/agent-skills', `    github-tree-sha: ${sha}`, nameLine, '---', srcSkill.slice(srcSkill.indexOf('---', 3) + 4).replace(/^\r?\n/, '')].join('\n');
@@ -55,10 +60,12 @@ for (const dest of DESTS) {
       writeFileSync(join(target, 'SKILL.md'), want);
       changes.push('SKILL.md');
     }
-    // 资源文件独立按内容比对同步，不依赖 SKILL.md 是否变化
+    // 资源文件独立按内容比对同步，不依赖 SKILL.md 是否变化；源已删除的资源在目标中清理（如 agents/openai.yaml）
+    const srcFiles = new Set();
     for (const f of listFiles(folder)) {
       if (f.endsWith('SKILL.md')) continue;
-      const relf = f.slice(folder.length + 1);
+      const relf = f.slice(folder.length + 1).replace(/\\/g, '/');
+      srcFiles.add(relf);
       const tf = join(target, relf);
       const cur = existsSync(tf) ? readFileSync(tf).toString('base64') : '';
       const next = readFileSync(f).toString('base64');
@@ -67,6 +74,12 @@ for (const dest of DESTS) {
         cpSync(f, tf);
         changes.push(relf);
       }
+    }
+    for (const f of listFiles(target)) {
+      const relf = f.slice(target.length + 1).replace(/\\/g, '/');
+      if (relf === 'SKILL.md' || srcFiles.has(relf)) continue;
+      rmSync(f, { force: true });
+      changes.push('REMOVED ' + relf);
     }
     if (changes.length) report.push(`${dest.slice(24)}/${name}: ${old ? 'UPDATED' : 'INSTALLED'} (${changes.join(', ')})`);
   }
