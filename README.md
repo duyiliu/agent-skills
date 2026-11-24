@@ -28,6 +28,8 @@ node scripts/install-skills.mjs --runner codex --check
 
 安装副本不会随 GitHub 更新自动同步；拉取仓库新版本后重新执行安装。可用 `--dest <路径>` 指定目标位置，`--check` 仅对比不修改。脚本不清理历史安装目录（已迁移的 `jrebel-start` 和合并的 `work-convention` 本机副本都不会自动移除，确认替代 Skill 可用后需手动卸载）；详情见 [Goal Skills 安装与兼容](skills/goals/README.md#安装与一致性检查codex--claude-code)。任务路由的权威索引见 [Skills 默认路由](skills/README.md#默认路由)。
 
+本仓库的安装与同步脚本**只管理本仓库的通用 Skills**，不会安装或更新 LifeOS 自有 Skill。LifeOS 客户端副本应从 LifeOS 仓库根目录运行 `python tools/sync_skills.py --target <name>=<实际 Skill 目录>`；详见 [LifeOS Skills 同步说明](https://github.com/duyiliu/LifeOS/blob/master/skills/README.md)。
+
 ## Engineering
 
 - [task-design](skills/engineering/task-design/SKILL.md) — establish a design baseline for substantial or high-contract changes.
