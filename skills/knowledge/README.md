@@ -1,60 +1,20 @@
-# Knowledge Skills
+# Generic Knowledge Skills
 
-面向用户自有的、由 AI 维护的 Markdown 知识库。此目录只保存 Skill 源文件；知识正文仍保存在独立的 LifeOS vault 或用户指定的其他目录。
+面向用户明确指定的、由 AI 维护的 Markdown 知识库。此目录只保存通用 Skill 源文件，不绑定某个固定仓库、目录结构或个人记忆模型。
 
-- [knowledge](knowledge/SKILL.md) — 按需查找、记录、更新跨项目知识。明确要求“记下来”“从我的笔记里找”时使用；普通编程任务不自动沉淀。
-- [knowledge-review](knowledge-review/SKILL.md) — 显式审查重复、矛盾、过期信息及链接问题。默认只读、基于证据，不自行删除/合并。
+- [knowledge](knowledge/SKILL.md) — 按需查找、记录、更新通用 Markdown 知识库。
+- [knowledge-review](knowledge-review/SKILL.md) — 显式审查重复、矛盾、过期信息及链接问题；默认只读。
 
-## 知识库定位
+## 适用范围
 
-两个 Skill 共用优先级：用户明确指定的绝对路径 > KNOWLEDGE_HOME 环境变量 > 已有全局规则中的 LifeOS 路径（当前默认 D:\workspace\LifeOS）> 已验证的当前 LifeOS 目录。
+- 适用于用户明确指定的 Markdown 知识库，或通过 KNOWLEDGE_HOME 明确配置的知识库。
+- **不适用于 LifeOS。** 如果目标目录同时具有 Home.md、MEMORY.md、memory/README.md 和 tools/memory_search.py，应使用 LifeOS 仓库维护的 skills/lifeos/SKILL.md。
+- 不创建第二个知识库，不猜测磁盘路径，不把当前代码项目自动当作个人知识库。
 
-Windows PowerShell：
+## 通用约定
 
-~~~powershell
-[Environment]::SetEnvironmentVariable('KNOWLEDGE_HOME', 'D:\workspace\LifeOS', 'User')
-~~~
-
-重启 AI 客户端后生效。Skill 不会替用户新建第二个 vault。现有 LifeOS 目录（10_AI开发环境 / 20_优智科技 / 30_任务 / 40_生活 / 90_资料杂项 / knowledge）保持不变，Skill 本身也不复制到 LifeOS；个人长期记忆入口是 MEMORY.md，规范见 memory/README.md。
-
-## 触发边界
-
-- 搜索、记录、修改知识 → knowledge（自动匹配明确的知识操作意图，亦可手动调用）。
-- 清理、审计、查重、发现过时内容 → knowledge-review（仅明确发起审查时）。
-- 当前项目的设计文档/接口说明 → 项目内既有规范和 task-design/task-execution；不应分流到知识库。
-- Git 提交/推送 → 写入后由本 Skill 按受限文件范围执行 commit + push（用户已明确授权）；沿用 git-commit 的提交风格，但不通过 Skill 名称获得范围外授权。
-- **任何知识检索、审查或写入之前** → 先执行两个 Skill 共用的同步前置（`git fetch` → `git pull --ff-only` → 校验 `HEAD` 与 `'@{upstream}'` 一致），失败即停止并报告，不得静默使用可能过期的内容。
-
-## 客户端安装
-
-从本仓库将相应目录完整复制到各客户端 Skill 目录（Codex ~/.codex/skills/、Claude Code ~/.claude/skills/ 等）；Pi 按其发现路径配置。仓库更新不会自动部署，维护时可运行 `node scripts/sync-local-copies.mjs` 把 SSOT 同步到本机运行时副本。
-
-## 完整闭环（由 Skill 自己执行）
-
-两个 Skill 的读写闭环全部由 Skill 当场完成，用户已明确授权：
-
-1. **任何读写笔记之前**：同步前置，在 vault 根目录按固定顺序执行，校验一致才继续：
-
-~~~bash
-git fetch --quiet origin <branch>
-git status --porcelain=v1
-git diff --name-only --diff-filter=U                       # 有输出 = 冲突，停止
-git rev-list --left-right --count 'HEAD...@{upstream}'     # 左=ahead 右=behind
-git pull --ff-only                                          # 仅 behind>0
-git rev-parse HEAD && git rev-parse '@{upstream}'          # 必须一致
-~~~
-
-   失败即停止并报告；`pull` 拉入新提交后重新读取目标文档再作答。
-
-2. **写入完成之后**：只暂存本次实际改动的笔记路径、对暂存 diff 做敏感检查、commit、`git push`；推送后再校验 `HEAD` 与 `@{upstream}` 一致，失败如实报告"本地已提交，未推送"，不 force。只读查询不产生提交。
-
-同步前置只做拉取，不提交、不推送、不清理工作区，也不用 stash / reset / force 绕过冲突；它只保证本机与 origin 上该分支对齐，不保证另一端未推送的改动或并发写入。写入后的提交只用明确文件清单，禁止 `git add -A`，禁止把账号/凭据类文件混入。详见各 SKILL.md。
-
-
-## 个人长期记忆层（LifeOS v0.1）
-
-- **不新建第二个知识库**：LifeOS 保存知识和已审核记忆，agent-skills 仅保存流程规则。
-- 当前事实优先维护原笔记；长期偏好与决策演变用 MEMORY.md + memory/ 链接原事实源。
-- 待确认记忆放 memory/inbox/，不能当作用户已确认的事实；个人记忆的重大变更需用户核实。
-- 只读脚本位于 LifeOS/tools/memory_search.py；须先按上面的 Git 同步前置操作，再运行 index/search。其默认范围为安全白名单，不自动收录公司/账号数据。
-- 查询默认 general（通用知识）；明确授权的个人上下文可用 --scope personal 或 --scope all。**CLI 路径过滤不构成系统权限边界**。
+- 用户明确提出搜索、记录、更新或审查时才触发；普通编程任务不自动沉淀。
+- 优先更新原文档，保留来源、日期和适用范围；不把 AI 推测写成用户事实。
+- 读取和写入前遵守目标知识库自身的 AGENTS.md、README 和 Git 约定。
+- 不因 Skill 自身而获得 commit、push、删除或批量改写权限。
+- 不存密码、Token、私钥、Cookie、账号恢复码或未经授权的敏感数据。
