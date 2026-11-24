@@ -15,7 +15,7 @@ Windows PowerShell：
 [Environment]::SetEnvironmentVariable('KNOWLEDGE_HOME', 'D:\workspace\LifeOS', 'User')
 ~~~
 
-重启 AI 客户端后生效。Skill 不会替用户新建第二个 vault。已有 LifeOS 目录（10_工作 / 20_生活 / 30_资料）保持不变，Skill 本身也不复制到 LifeOS。
+重启 AI 客户端后生效。Skill 不会替用户新建第二个 vault。现有 LifeOS 目录（10_AI开发环境 / 20_优智科技 / 30_任务 / 40_生活 / 90_资料杂项 / knowledge）保持不变，Skill 本身也不复制到 LifeOS；个人长期记忆入口是 MEMORY.md，规范见 memory/README.md。
 
 ## 触发边界
 
@@ -49,3 +49,12 @@ git rev-parse HEAD && git rev-parse '@{upstream}'          # 必须一致
 2. **写入完成之后**：只暂存本次实际改动的笔记路径、对暂存 diff 做敏感检查、commit、`git push`；推送后再校验 `HEAD` 与 `@{upstream}` 一致，失败如实报告"本地已提交，未推送"，不 force。只读查询不产生提交。
 
 同步前置只做拉取，不提交、不推送、不清理工作区，也不用 stash / reset / force 绕过冲突；它只保证本机与 origin 上该分支对齐，不保证另一端未推送的改动或并发写入。写入后的提交只用明确文件清单，禁止 `git add -A`，禁止把账号/凭据类文件混入。详见各 SKILL.md。
+
+
+## 个人长期记忆层（LifeOS v0.1）
+
+- **不新建第二个知识库**：LifeOS 保存知识和已审核记忆，agent-skills 仅保存流程规则。
+- 当前事实优先维护原笔记；长期偏好与决策演变用 MEMORY.md + memory/ 链接原事实源。
+- 待确认记忆放 memory/inbox/，不能当作用户已确认的事实；个人记忆的重大变更需用户核实。
+- 只读脚本位于 LifeOS/tools/memory_search.py；须先按上面的 Git 同步前置操作，再运行 index/search。其默认范围为安全白名单，不自动收录公司/账号数据。
+- 查询默认 general（通用知识）；明确授权的个人上下文可用 --scope personal 或 --scope all。**CLI 路径过滤不构成系统权限边界**。
