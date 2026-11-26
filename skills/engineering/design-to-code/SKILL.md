@@ -159,3 +159,8 @@ python scripts/replica_check.py --ref 参考图.png --shot 渲染.png \
 
 - [references/对照实验与归因.md](references/对照实验与归因.md) — 同图同机对照实验的完整数据、源码级差异、字重实验与归因结论
 - [assets/reference-princess-wukong.png](assets/reference-princess-wukong.png) — 上述实验使用的原始参考图（1672×941）
+- [examples/princess-wukong/](examples/princess-wukong/README.md) — 完整可运行示例：页面源码、9 张切片素材、最终截图与实测数值
+
+示例的最终渲染结果（SSIM 0.9453，像素差异 3.20%）：
+
+![示例最终渲染](examples/princess-wukong/result-1672x941.png)
