@@ -22,6 +22,9 @@
 不改变高成本契约的 Bug / 根因调查 / 性能 / 重构专项
   → 可用 goals/ 下对应 goal-*
 
+有明确参考图的页面复刻 / 还原度验收
+  → design-to-code
+
 模糊探索 / UI 体验持续打磨 / “更高级、更好玩”
   → goal-improve（仅显式调用进入长循环）
 ```
@@ -69,6 +72,7 @@
 - [task-design](task-design/SKILL.md) — 判断是否值得先设计；建立 AC、完成设计 Review，并在实施前等待用户确认
 - [task-execution](task-execution/SKILL.md) — 将已确认 design / 目标转成 `tasks.md`，维护代码基线与 AC 覆盖，持续实现、验证、Review 和返工
 - [ai-test-checkpoints](ai-test-checkpoints/SKILL.md) — AI 通用测试检查点：跨项目 Web 管理系统的 12 维度黑盒测试检查清单
+- [design-to-code](design-to-code/SKILL.md) — 设计图 / AI 生成图转可维护 HTML+CSS，并用 SSIM、区域分项与墨量体检量化验收还原度
 
 ## 已整合并在本仓库维护的工程 Skill
 
