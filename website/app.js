@@ -7,13 +7,30 @@ const dialog = $('#detail');
 function el(tag, text, className) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (className) n.className = className; return n; }
 const formatDate = iso => iso ? new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit' }).format(new Date(iso)) : '—';
 
+function imageNode(alt, target) {
+  if (!activeFile || !activeSkill) return null;
+  const dir = activeFile.repoPath.split('/').slice(0, -1).join('/');
+  const absolute = new URL(dir + '/' + target.split('#')[0], 'https://repository.local/').pathname.slice(1);
+  const file = activeSkill.files.find(f => f.repoPath === decodeURIComponent(absolute));
+  if (!file || !file.assetUrl) return null;
+  const figure = el('figure', undefined, 'md-figure');
+  const img = el('img'); img.src = file.assetUrl; img.alt = alt || file.path; img.loading = 'lazy';
+  figure.append(img);
+  if (alt) figure.append(el('figcaption', alt));
+  return figure;
+}
 function inline(text, parent) {
-  const regex = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+  const regex = /(!\[[^\]]*\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
   let start = 0;
   for (const match of text.matchAll(regex)) {
     parent.append(document.createTextNode(text.slice(start, match.index)));
     const token = match[0];
-    if (token.startsWith('`')) parent.append(el('code', token.slice(1,-1)));
+    if (token.startsWith('![')) {
+      const parts = token.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      const figure = imageNode(parts[1], parts[2].replace(/^<|>$/g, ''));
+      parent.append(figure || document.createTextNode(parts[1] || parts[2]));
+    }
+    else if (token.startsWith('`')) parent.append(el('code', token.slice(1,-1)));
     else if (token.startsWith('**')) parent.append(el('strong', token.slice(2,-2)));
     else {
       const parts = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
@@ -24,6 +41,30 @@ function inline(text, parent) {
     start = match.index + token.length;
   }
   parent.append(document.createTextNode(text.slice(start)));
+}
+function formatSize(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+}
+function renderBinary(file) {
+  const wrap = el('div', undefined, 'binary-view');
+  if (/\.(png|jpe?g|gif|webp|avif|bmp|svg|ico)$/i.test(file.path)) {
+    const img = el('img');
+    img.src = file.assetUrl;
+    img.alt = file.path.split('/').pop();
+    img.loading = 'lazy';
+    const link = el('a', '在新窗口打开原图 ↗');
+    link.href = file.assetUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const meta = el('p', `${file.path} · ${formatSize(file.size)}`, 'binary-meta');
+    wrap.append(img, meta, link);
+  } else {
+    wrap.append(el('p', `${file.path} · ${formatSize(file.size)} · 二进制文件`));
+  }
+  return wrap;
 }
 function markdown(source) {
   const root = document.createDocumentFragment();
@@ -37,6 +78,13 @@ function markdown(source) {
     }
     if (!line.trim()) {list=null;continue;}
     if (/^\s*[-*_]{3,}\s*$/.test(line)) {root.append(el('hr'));list=null;continue;}
+    const imageOnly = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imageOnly) {
+      const figure = imageNode(imageOnly[1], imageOnly[2].replace(/^<|>$/g, ''));
+      root.append(figure || el('p', imageOnly[1] || imageOnly[2]));
+      list = null;
+      continue;
+    }
     if (line.includes('|') && /^\s*\|?\s*:?-{3,}/.test(lines[i+1] || '')) {
       const cells = s => s.trim().replace(/^\||\|$/g,'').split('|').map(x=>x.trim());
       const table=el('table'), head=el('thead'), row=el('tr'); cells(line).forEach(x=>{const c=el('th');inline(x,c);row.append(c);});head.append(row);table.append(head);i++;
@@ -58,7 +106,7 @@ function renderCategories() {
 }
 function renderCards() {
   const q=$('#search').value.trim().toLocaleLowerCase();$('#clear').hidden=!q;
-  const filtered=catalog.entries.filter(e=>(category==='all'||e.category===category) && (!q||`${e.name} ${e.description} ${e.files.map(f=>f.content).join(' ')}`.toLocaleLowerCase().includes(q)));
+    const filtered=catalog.entries.filter(e=>(category==='all'||e.category===category) && (!q||`${e.name} ${e.description} ${e.files.map(f=>f.content||'').join(' ')}`.toLocaleLowerCase().includes(q)));
   filtered.sort($('#sort').value==='updated' ? (a,b)=>b.updatedAt.localeCompare(a.updatedAt) : (a,b)=>a.name.localeCompare(b.name));
   $('#library-title').textContent=labels[category];$('#result-count').textContent=`${filtered.length} 个${q?'匹配结果':'可用 Skills'}`;
   $('#empty').hidden=filtered.length>0;
@@ -72,8 +120,11 @@ function renderCards() {
   }));
 }
 function selectFile(file, updateRoute=true) {
-  activeFile=file;$('#document').replaceChildren(markdown(file.content));$('#edit-link').href=file.editUrl;
-  $('#copy').textContent='复制全文';$('#download').textContent='下载当前文件 ↓';
+      activeFile=file;
+      if (file.binary) { $('#document').replaceChildren(renderBinary(file)); $('#copy').textContent='复制全文'; $('#copy').disabled=true; }
+      else { $('#document').replaceChildren(markdown(file.content)); $('#copy').disabled=false; $('#copy').textContent='复制全文'; }
+      $('#edit-link').href=file.editUrl;
+      $('#download').textContent='下载当前文件 ↓';
   $('#file-list').replaceChildren(...activeSkill.files.map(f=>{const b=el('button',f.path,f.path===file.path?'active':'');b.setAttribute('aria-current',f.path===file.path?'true':'false');b.onclick=()=>selectFile(f);return b;}));
   if(updateRoute)history.replaceState(null,'',`#${new URLSearchParams({skill:activeSkill.name,file:file.path})}`);
 }
@@ -95,7 +146,7 @@ $('#close-detail').onclick=closeDetail;
 dialog.addEventListener('cancel',e=>{e.preventDefault();closeDetail();});
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDetail();}});
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(activeFile.content);$('#copy').textContent='已复制 ✓';}catch{$('#copy').textContent='复制失败，请选中文本复制';}};
-$('#download').onclick=()=>{const url=URL.createObjectURL(new Blob([activeFile.content],{type:'text/plain;charset=utf-8'}));const a=el('a');a.href=url;a.download=activeFile.path.split('/').pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+  $('#download').onclick=()=>{if(activeFile.binary){const a=el('a');a.href=activeFile.assetUrl;a.download=activeFile.path.split('/').pop();a.click();return;}const url=URL.createObjectURL(new Blob([activeFile.content],{type:'text/plain;charset=utf-8'}));const a=el('a');a.href=url;a.download=activeFile.path.split('/').pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!dialog.open&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){e.preventDefault();$('#search').focus();}});
 window.addEventListener('popstate',applyRoute);window.addEventListener('hashchange',applyRoute);
 try {

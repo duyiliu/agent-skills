@@ -14,6 +14,10 @@ description: 把设计图或 AI 生成图复刻成可维护的 HTML+CSS 页面�
 
 ## 核心判断：上限由切图策略决定
 
+参考图（下方实验用的原图，1672×941）：
+
+![参考图：公主孙悟空后台](assets/reference-princess-wukong.png)
+
 同一实验的区域级证据（SSIM，越高越接近原图）：
 
 | 区域 | 占位/线稿策略 | 真实切图策略 | 提升 |
@@ -154,3 +158,4 @@ python scripts/replica_check.py --ref 参考图.png --shot 渲染.png \
 ## 参考
 
 - [references/对照实验与归因.md](references/对照实验与归因.md) — 同图同机对照实验的完整数据、源码级差异、字重实验与归因结论
+- [assets/reference-princess-wukong.png](assets/reference-princess-wukong.png) — 上述实验使用的原始参考图（1672×941）
