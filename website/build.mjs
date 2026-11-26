@@ -1,4 +1,4 @@
-import { readdir, readFile, mkdir, copyFile, writeFile } from 'node:fs/promises';
+import { readdir, readFile, mkdir, copyFile, writeFile, stat } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -7,6 +7,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
 const skillsRoot = join(root, 'skills');
 const out = join(here, 'dist');
+const assetsRoot = join(out, 'assets');
+// 图片等二进制资源不进入 catalog.json（体积过大），改为复制到 dist/assets 并由页面按仓库路径引用。
+const binaryExt = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.avif', '.bmp', '.ico']);
 const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
 const posix = path => path.replaceAll('\\', '/');
 const fileUrl = (mode, path) => `https://github.com/duyiliu/agent-skills/${mode}/main/${path.split('/').map(encodeURIComponent).join('/')}`;
@@ -27,9 +30,23 @@ for (const path of paths.filter(p => p.endsWith('/SKILL.md') || p.endsWith('\\SK
   const files = [];
   for (const file of paths.filter(p => p.startsWith(dir + '\\') || p.startsWith(dir + '/'))) {
     const repoPath = posix(relative(root, file));
-    const content = await readFile(file, 'utf8');
-    if (content.includes('\0')) throw new Error(`Binary file needs explicit publishing support: ${repoPath}`);
-    files.push({ path: posix(relative(dir, file)), repoPath, content, editUrl: fileUrl('edit', repoPath), sourceUrl: fileUrl('blob', repoPath) });
+    const ext = file.slice(file.lastIndexOf('.')).toLowerCase();
+    const isBinary = binaryExt.has(ext);
+    const content = isBinary ? null : await readFile(file, 'utf8');
+    if (!isBinary && content.includes('\0')) throw new Error(`Binary file needs explicit publishing support: ${repoPath}`);
+    if (isBinary) {
+      const target = join(assetsRoot, repoPath);
+      await mkdir(dirname(target), { recursive: true });
+      await copyFile(file, target);
+    }
+    files.push({
+      path: posix(relative(dir, file)),
+      repoPath,
+      content,
+      ...(isBinary ? { binary: true, size: (await stat(file)).size, assetUrl: 'assets/' + repoPath } : {}),
+      editUrl: fileUrl('edit', repoPath),
+      sourceUrl: fileUrl('blob', repoPath),
+    });
   }
   files.sort((a,b) => (a.path === 'SKILL.md' ? -1 : b.path === 'SKILL.md' ? 1 : a.path.localeCompare(b.path)));
   entries.push({ name, description, category, files, updatedAt: git('log', '-1', '--format=%cI', '--', sourcePath), editUrl: fileUrl('edit', sourcePath) });
